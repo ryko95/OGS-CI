@@ -5,10 +5,11 @@
 <meta name="description" content="Observatoire géographique du suicide en Côte d'Ivoire : cartographie, analyses spatiales, tableau de bord et signalements.">
 <title>Observatoire géographique du suicide en Côte d'Ivoire</title>
 <link rel="stylesheet" href="./resources/ol.css"><link rel="stylesheet" href="resources/fontawesome-all.min.css"><link rel="stylesheet" href="./resources/ol-layerswitcher.css"><link rel="stylesheet" href="./resources/qgis2web.css"><link rel="stylesheet" href="./observatoire.css">
+<script src="https://page-views-api.ratneshc.com/script" data-site="ryko95.github.io" data-path="/OGS-CI" defer></script>
 </head>
 <body>
 <div id="app">
-<header class="topbar"><div class="brand-mark">OG</div><div class="brand"><h1>Observatoire géographique du suicide en Côte d’Ivoire</h1><p>Cartographie • veille territoriale • analyse descriptive • signalement citoyen</p></div><div class="top-actions"><button id="btnHome">⌂ Vue nationale</button><button id="btnHeat">♨ Heatmap</button><button id="btnReport">＋ Signaler un cas</button></div></header>
+<header class="topbar"><div class="brand-mark">OG</div><div class="brand"><h1>Observatoire géographique du suicide en Côte d’Ivoire</h1><p>Cartographie • veille territoriale • analyse descriptive • signalement citoyen</p></div><div class="top-actions"><div class="visit-counter" title="Nombre de visites enregistrées sur l’Observatoire"><span class="visit-eye">👁</span><span id="visitCount">…</span><span>visites</span></div><button id="btnHome">⌂ Vue nationale</button><button id="btnHeat">♨ Heatmap</button><button id="btnReport">＋ Signaler un cas</button></div></header>
 <main class="workspace">
 <aside class="side left">
 <section class="panel"><h2>🗺️ Cartographie thématique</h2><div class="field-row"><label>Variable de la couche Région sanitaire</label><select id="themeField"></select></div><div class="field-row inline"><div><label>Mode</label><select id="themeMode"><option value="auto">Automatique</option><option value="numeric">Valeurs chiffrées — tons chauds</option><option value="nominal">Valeurs nominales — tons froids</option></select></div><div><label>Classes</label><select id="themeClasses"><option>5</option><option>4</option><option>6</option><option>7</option></select></div></div><div id="themeLegend"></div><p class="muted">Les variables numériques sont représentées avec une gamme jaune→rouge. Les variables nominales utilisent des tons froids différenciés.</p></section>
@@ -38,4 +39,21 @@
 <script src="resources/qgis2web_expressions.js"></script><script src="./resources/functions.js"></script><script src="./resources/ol.js"></script><script src="./resources/ol-layerswitcher.js"></script><script src="resources/olms.js"></script>
 <script src="layers/REGIONSANITAIRE_1.js"></script><script src="layers/LIEUDESUICIDE_2.js"></script><script src="layers/SERVICESDESOINSPUBLICS_3.js"></script>
 <script src="styles/REGIONSANITAIRE_1_style.js"></script><script src="styles/LIEUDESUICIDE_2_style.js"></script><script src="styles/SERVICESDESOINSPUBLICS_3_style.js"></script><script src="./layers/layers.js"></script><script src="./resources/Autolinker.min.js"></script><script src="./resources/qgis2web.js"></script><script src="./observatoire.js"></script>
+<script>
+(function(){
+  const el=document.getElementById('visitCount');
+  async function loadVisits(){
+    try{
+      const res=await fetch('https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=%2FOGS-CI',{cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data=await res.json();
+      el.textContent=Number(data.views||0).toLocaleString('fr-FR');
+    }catch(e){
+      el.textContent='—';
+      el.parentElement.title='Compteur momentanément indisponible';
+    }
+  }
+  window.addEventListener('load',function(){setTimeout(loadVisits,1200);});
+})();
+</script>
 </body></html>
