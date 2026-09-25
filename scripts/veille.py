@@ -5,6 +5,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.parse
 import urllib.request
 import urllib.error
@@ -115,6 +116,8 @@ def collect(fetcher=fetch, now=None):
     seen = {a["url"] for a in entries.values()} | mapped
     errors, successes, detected = [], 0, 0
     for source, query in ([('GDELT', q) for q in QUERIES] + [('Google Actualités', q) for q in NEWS_QUERIES]):
+        if source == 'GDELT' and query != QUERIES[0] and fetcher is fetch:
+            time.sleep(6)  # La limite publique de GDELT est d'une requête toutes les 5 secondes.
         try:
             articles = fetcher(query) if source == 'GDELT' else fetch_news(query)
             successes += 1
