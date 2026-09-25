@@ -32,6 +32,5 @@
 /* Compteur de visites */
 .visit-counter{display:flex;align-items:center;gap:6px;min-height:36px;padding:7px 11px;border:1px solid rgba(255,255,255,.22);border-radius:10px;background:linear-gradient(135deg,rgba(15,118,110,.9),rgba(3,105,161,.9));color:#fff;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .veille-list{max-height:210px;overflow:auto;border-top:1px solid #e2e8f0;margin:8px 0}.veille-item{padding:7px 2px;border-bottom:1px solid #e2e8f0;font-size:11px;overflow-wrap:anywhere}.veille-item a{color:#075985;font-weight:700}.veille-item small{color:#64748b}
-.report-transport,.report-honeypot{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important;left:-9999px!important}.btn:disabled{opacity:.55;cursor:not-allowed}
 .visit-counter #visitCount{font-size:15px;font-weight:900;color:#fff}.visit-eye{font-size:14px}.visit-counter span:last-child{color:#dbeafe;font-weight:700}
 @media(max-width:980px){.visit-counter span:last-child{display:none}.visit-counter{padding:7px 9px}}

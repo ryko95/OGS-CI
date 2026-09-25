@@ -65,27 +65,14 @@ function reportRegions(){const vals=[...new Set(regionFeatures.map(f=>regionName
 reportRegions();loadReports();$('btnReport').onclick=()=> $('reportModal').classList.add('open');$('closeReport').onclick=()=> $('reportModal').classList.remove('open');$('reportModal').onclick=e=>{if(e.target===$('reportModal'))$('reportModal').classList.remove('open')};$('pickLocation').onclick=()=>{pickMode=true;$('reportModal').classList.remove('open');map.getTargetElement().style.cursor='crosshair';alert('Cliquez sur la carte à l’emplacement du signalement.');};
 const REPORT_WHATSAPP='2250747460104';
 const REPORT_EMAIL='sreueric@gmail.com';
-const reportEndpoint=String(window.OGS_REPORT_ENDPOINT||'').trim();
-const directEnabled=/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(reportEndpoint);
-if(directEnabled){$('sendDirect').disabled=false;$('reportStatus').textContent='Envoi direct disponible : aucune connexion à une boîte mail n’est nécessaire.';}
-let pendingDirect=null, reportTimer=null;
-function reportSnapshot(){
+function prepareReport(){
   const form=$('reportForm');
   if(!form.reportValidity())return null;
-  const r=Object.fromEntries(new FormData(form).entries());
-  r.id=$('reportId').value||'OGS-'+(crypto.randomUUID?crypto.randomUUID():`${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`);
+  const fd=new FormData(form),r=Object.fromEntries(fd.entries());
+  r.id='USR-'+Date.now();
   r.created_at=new Date().toISOString();
-  $('reportId').value=r.id;
-  return r;
-}
-function storeReport(r){
   let arr=[];try{arr=JSON.parse(localStorage.getItem('ogsuicide_reports')||'[]')}catch(x){}
-  if(!arr.some(item=>item.id===r.id))arr.push(r);
-  try{localStorage.setItem('ogsuicide_reports',JSON.stringify(arr));loadReports();}catch(x){}
-}
-function prepareReport(){
-  const r=reportSnapshot();if(!r)return null;
-  storeReport(r);
+  arr.push(r);localStorage.setItem('ogsuicide_reports',JSON.stringify(arr));loadReports();
   return r;
 }
 function reportMessage(r){
@@ -110,24 +97,7 @@ function reportMessage(r){
   ].join('\n');
 }
 function finishReport(form){form.reset();$('reportModal').classList.remove('open');}
-function directBusy(busy){$('sendDirect').disabled=busy||!directEnabled;$('sendWhatsApp').disabled=busy;$('sendEmail').disabled=busy;}
-$('reportForm').onsubmit=e=>{
-  e.preventDefault();
-  if(!directEnabled||pendingDirect)return;
-  const r=reportSnapshot();if(!r)return;
-  pendingDirect=r;directBusy(true);
-  $('reportStatus').textContent='Transmission en cours…';
-  const form=$('reportForm');form.action=reportEndpoint;form.method='POST';form.target='ogsReportTransport';
-  reportTimer=setTimeout(()=>{pendingDirect=null;directBusy(false);$('reportStatus').textContent='Impossible de confirmer la réception. Vous pouvez réessayer avec la même référence ou utiliser WhatsApp.';},25000);
-  form.submit();
-};
-window.addEventListener('message',e=>{
-  if(!pendingDirect||!e.data||e.data.type!=='ogs-report-response'||e.data.id!==pendingDirect.id)return;
-  try{const host=new URL(e.origin).hostname;if(host!=='script.google.com'&&host!=='script.googleusercontent.com'&&!host.endsWith('.googleusercontent.com'))return;}catch(x){return;}
-  clearTimeout(reportTimer);const r=pendingDirect;pendingDirect=null;directBusy(false);
-  if(e.data.ok){storeReport(r);$('reportForm').reset();$('reportStatus').textContent=`Signalement transmis à Dr SREU Eric. Référence : ${r.id}. Il reste à vérifier.`;}
-  else{$('reportStatus').textContent='Envoi non confirmé : '+String(e.data.message||'veuillez réessayer');}
-});
+$('reportForm').onsubmit=e=>e.preventDefault();
 $('sendWhatsApp').onclick=()=>{
   const form=$('reportForm'),r=prepareReport();if(!r)return;
   const url=`https://wa.me/${REPORT_WHATSAPP}?text=${encodeURIComponent(reportMessage(r))}`;
