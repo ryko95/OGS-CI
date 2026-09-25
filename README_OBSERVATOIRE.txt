@@ -19,16 +19,17 @@ FONCTIONNALITES AJOUTEES
 4. Heatmap dynamique des cas affiches, avec rayon et flou reglables.
 5. Formulaire de signalement : date, region, commune, quartier/localite,
    sexe, age, milieu, statut, description et position cartographique.
-6. Les signalements du prototype sont stockes dans localStorage et affiches
-   en violet comme donnees NON VALIDEES.
+6. Les signalements du navigateur sont stockes dans localStorage et affiches
+   en violet comme donnees NON VALIDEES. Un service Google Apps Script peut
+   envoyer directement chaque signalement a l'adresse du responsable, sans
+   ouvrir la messagerie du visiteur (voir SIGNALEMENTS_DIRECTS.md).
 7. Couche existante des services de soins publics conservée et activable.
 
 IMPORTANT POUR UNE MISE EN PRODUCTION
-Le formulaire est volontairement local dans ce prototype statique. Pour une
-plateforme publique collaborative, connecter le formulaire a une base serveur
-(PostgreSQL/PostGIS, Supabase ou API REST) et mettre en place une validation
-avant publication. Ne pas collecter/publier d'identites personnelles ni
-adresses domiciliaires precises.
+L'envoi direct reste desactive tant que l'URL du service Apps Script n'est pas
+renseignee dans report-config.js. Les signalements transmis par e-mail doivent
+etre verifies avant publication sur la carte. Ne pas collecter/publier
+d'identites personnelles ni d'adresses domiciliaires precises.
 
 OUVERTURE
 Ouvrir index.html via un serveur web (GitHub Pages convient). Pour un test local,
