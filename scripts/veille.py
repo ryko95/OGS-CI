@@ -7,7 +7,10 @@ import re
 import sys
 import urllib.parse
 import urllib.request
+import urllib.error
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,10 +22,8 @@ QUERIES = (
     'suicide "Cote d Ivoire"',
     'suicide Abidjan',
     'suicide Bouake',
-    'suicide Yamoussoukro',
-    'suicide Yopougon',
-    'suicide Korhogo',
 )
+NEWS_QUERIES = ('suicide "Côte d’Ivoire"', 'suicide Abidjan', 'suicide Bouaké')
 USER_AGENT = "OGS-CI veille de presse/1.0 (contact: sreueric@gmail.com)"
 
 
@@ -45,6 +46,10 @@ def canonical_url(value):
 
 
 def published(value):
+    try:
+        return parsedate_to_datetime(str(value)).date().isoformat()
+    except (ValueError, TypeError, IndexError):
+        pass
     raw = re.sub(r"\D", "", str(value or ""))
     if len(raw) < 8:
         return ""
@@ -70,11 +75,32 @@ def previous_urls():
 def fetch(query):
     params = urllib.parse.urlencode({"query": query, "mode": "artlist", "format": "json", "maxrecords": "75", "timespan": "7d"})
     req = urllib.request.Request(f"{API}?{params}", headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(req, timeout=25) as response:
-        payload = json.load(response)
-    if not isinstance(payload.get("articles"), list):
+    try:
+        with urllib.request.urlopen(req, timeout=14) as response:
+            payload = json.load(response)
+    except urllib.error.HTTPError as exc:
+        body = exc.read(120).decode('utf-8', errors='replace').replace('\n', ' ')
+        raise RuntimeError(f'GDELT HTTP {exc.code}: {body}') from exc
+    if payload == {}:
+        return []
+    if not isinstance(payload, dict) or not isinstance(payload.get("articles"), list):
         raise ValueError("Réponse GDELT sans liste d'articles")
     return payload["articles"]
+
+
+def fetch_news(query):
+    """Flux de résultats Google Actualités : liens publics, sans extraction d'identités."""
+    params = urllib.parse.urlencode({'q': query, 'hl': 'fr', 'gl': 'CI', 'ceid': 'CI:fr'})
+    req = urllib.request.Request('https://news.google.com/rss/search?' + params,
+                                 headers={'User-Agent': USER_AGENT})
+    try:
+        with urllib.request.urlopen(req, timeout=18) as response:
+            root = ET.fromstring(response.read(2_000_000))
+    except urllib.error.HTTPError as exc:
+        raise RuntimeError(f'Google Actualités HTTP {exc.code}') from exc
+    return [{'url': item.findtext('link'), 'title': item.findtext('title'),
+             'seendate': item.findtext('pubDate')}
+            for item in root.findall('./channel/item')]
 
 
 def collect(fetcher=fetch, now=None):
@@ -88,12 +114,12 @@ def collect(fetcher=fetch, now=None):
     mapped = previous_urls()
     seen = {a["url"] for a in entries.values()} | mapped
     errors, successes, detected = [], 0, 0
-    for query in QUERIES:
+    for source, query in ([('GDELT', q) for q in QUERIES] + [('Google Actualités', q) for q in NEWS_QUERIES]):
         try:
-            articles = fetcher(query)
+            articles = fetcher(query) if source == 'GDELT' else fetch_news(query)
             successes += 1
         except Exception as exc:
-            errors.append(f"{query}: {type(exc).__name__}")
+            errors.append(f"{source} {query}: {str(exc)[:150]}")
             continue
         for article in articles:
             url = canonical_url(article.get("url", ""))
@@ -112,13 +138,13 @@ def collect(fetcher=fetch, now=None):
             seen.add(url)
             detected += 1
     if not successes:
-        raise RuntimeError("Aucune requête GDELT réussie : " + "; ".join(errors))
+        raise RuntimeError("Aucune source disponible : " + "; ".join(errors))
     result = {"derniere_veille": now.isoformat(timespec="seconds"),
               "sources_interrogees": successes, "nouvelles_references": detected,
               "requêtes_en_echec": len(errors),
               "articles": sorted(entries.values(), key=lambda a: (a["date_publication"], a["id"]), reverse=True)[:300]}
     OUTPUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"{successes}/{len(QUERIES)} requêtes réussies, {detected} nouveaux liens, {len(result['articles'])} liens conservés")
+    print(f"{successes}/{len(QUERIES) + len(NEWS_QUERIES)} requêtes réussies, {detected} nouveaux liens, {len(result['articles'])} liens conservés")
     if errors:
         print("Erreurs partielles : " + "; ".join(errors), file=sys.stderr)
     return result

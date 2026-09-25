@@ -29,7 +29,8 @@ class TestVeille(unittest.TestCase):
 
             with patch.multiple(veille, ROOT=root, OUTPUT=root / 'data/veille.json',
                                 CONFIG=root / 'data/veille_config.json', EXISTING=root / 'layers/LIEUDESUICIDE_2.js'):
-                out = veille.collect(fake_fetch, datetime(2026, 9, 25, 16, tzinfo=timezone.utc))
+                with patch.object(veille, 'fetch_news', side_effect=fake_fetch):
+                    out = veille.collect(fake_fetch, datetime(2026, 9, 25, 16, tzinfo=timezone.utc))
                 self.assertEqual(1, len(out['articles']))
                 self.assertEqual(1, out['nouvelles_references'])
                 self.assertEqual(layer, (root / 'layers/LIEUDESUICIDE_2.js').read_text())
