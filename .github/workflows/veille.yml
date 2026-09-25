@@ -30,9 +30,15 @@ jobs:
           python-version: '3.12'
       - name: Rechercher les liens publics
         run: python scripts/veille.py
+      - name: Envoyer les nouveaux liens par e-mail
+        env:
+          OGS_SMTP_USER: ${{ secrets.OGS_SMTP_USER }}
+          OGS_SMTP_PASSWORD: ${{ secrets.OGS_SMTP_PASSWORD }}
+          OGS_ALERT_EMAIL: ${{ secrets.OGS_ALERT_EMAIL }}
+        run: python scripts/alerte_email.py
       - name: Publier le relevé de veille
         run: |
-          git add data/veille.json
+          git add data/veille.json data/alerte_email.json
           if git diff --cached --quiet; then exit 0; fi
           git -c user.name='OGS-CI veille' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Actualiser la veille médiatique'
           git push

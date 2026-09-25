@@ -6,6 +6,18 @@ Le panneau « Veille médiatique » affiche la date de la dernière exécution r
 
 Les réseaux sociaux ne sont **pas** surveillés dans cette version : leurs données nécessitent un accès/API autorisé propre à chaque plateforme. Cette collecte ne prétend pas couvrir tous les médias ivoiriens. Les liens Google Actualités peuvent être des pages intermédiaires redirigeant vers l'article. Les signalements citoyens présents dans la carte sont stockés localement dans le navigateur de chaque visiteur et ne remontent pas dans ce relevé.
 
+## Recevoir les nouveaux liens par e-mail
+
+Le même workflow prépare un e-mail **uniquement lorsqu'il existe des liens qui n'ont jamais été envoyés**. Le destinataire par défaut est `sreueric@gmail.com`. Les 8 liens repérés avant l'installation de ce module sont conservés et pourront être inclus dans le premier envoi. Le message ne contient pas de nom ni de titre d'article : uniquement les domaines, les dates et les liens à examiner. Les identifiants des liens déjà expédiés sont conservés dans `data/alerte_email.json` pour éviter l'envoi à chaque exécution.
+
+Pour activer l'envoi, ouvrir **GitHub → OGS-CI → Settings → Secrets and variables → Actions → New repository secret** et créer :
+
+1. `OGS_SMTP_USER` : l'adresse Gmail qui expédiera les alertes (par exemple votre propre adresse) ;
+2. `OGS_SMTP_PASSWORD` : un **mot de passe d'application Google** du compte expéditeur, jamais le mot de passe habituel du compte ;
+3. facultatif, `OGS_ALERT_EMAIL` : autre adresse de réception si vous ne souhaitez pas utiliser `sreueric@gmail.com`.
+
+Le compte expéditeur doit avoir la validation en deux étapes et autoriser la création d'un mot de passe d'application. Après avoir ajouté les deux secrets obligatoires, lancer **Actions → Veille médiatique OGS-CI → Run workflow** pour recevoir le premier récapitulatif sans attendre l'horaire suivant. N'inscrivez jamais un mot de passe dans le dépôt, une issue, un message ou le fichier de configuration. Si les secrets manquent, la carte continue à se mettre à jour, mais aucun e-mail ne part. Une erreur SMTP arrête l'exécution avant d'enregistrer l'envoi, afin que les liens restent à notifier lors de la prochaine tentative. Un cas exceptionnel d'interruption juste après l'envoi peut produire un doublon ; dans ce cas les URL permettent de le reconnaître.
+
 ## Désactiver
 
 Dans GitHub, ouvrir **Actions → Veille médiatique OGS-CI → ⋯ → Disable workflow**. Pour suspendre également les lancements manuels, remplacer `"enabled": true` par `"enabled": false` dans `data/veille_config.json`. L'historique de veille déjà publié reste affiché tant que `data/veille.json` n'est pas vidé. GitHub peut aussi désactiver automatiquement un workflow programmé sur un dépôt public inactif pendant 60 jours.
