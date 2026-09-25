@@ -7,6 +7,7 @@
   if (window.location.hostname !== 'ryko95.github.io' || !/^\/OGS-CI(?:\/|$)/i.test(window.location.pathname)) return;
 
   const beacon = document.createElement('script');
+  beacon.type = 'module';
   beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
   beacon.defer = true;
   beacon.setAttribute('data-cf-beacon', JSON.stringify({ token: token }));
