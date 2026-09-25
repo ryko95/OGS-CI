@@ -9,7 +9,7 @@ import urllib.parse
 import urllib.request
 import urllib.error
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
@@ -103,11 +103,13 @@ def fetch_news(query):
 
 def collect(fetcher=fetch, now=None):
     now = now or datetime.now(timezone.utc)
-    if not json.loads(CONFIG.read_text(encoding="utf-8")).get("enabled", False):
+    config = json.loads(CONFIG.read_text(encoding="utf-8"))
+    if not config.get("enabled", False):
         print("Veille désactivée dans data/veille_config.json")
         return None
+    start = date.fromisoformat(config.get("start_date", "1900-01-01"))
     old = json.loads(OUTPUT.read_text(encoding="utf-8"))
-    threshold = (now - timedelta(days=90)).date().isoformat()
+    threshold = max(start, (now - timedelta(days=90)).date()).isoformat()
     entries = {a["id"]: a for a in old.get("articles", []) if a.get("date_publication", "") >= threshold}
     mapped = previous_urls()
     seen = {a["url"] for a in entries.values()} | mapped
@@ -121,8 +123,8 @@ def collect(fetcher=fetch, now=None):
             continue
         for article in articles:
             url = canonical_url(article.get("url", ""))
-            date = published(article.get("seendate"))
-            if not url or url in seen or not date or date < threshold:
+            article_date = published(article.get("seendate"))
+            if not url or url in seen or not article_date or article_date < threshold:
                 continue
             title = str(article.get("title") or "").casefold()
             # Ce filtre ne constitue PAS une vérification du fait rapporté.
@@ -131,13 +133,14 @@ def collect(fetcher=fetch, now=None):
             hostname = urllib.parse.urlsplit(url).hostname
             id_ = hashlib.sha256(url.encode()).hexdigest()[:20]
             entries[id_] = {"id": id_, "url": url, "domaine": hostname,
-                            "date_publication": date, "premiere_detection": now.isoformat(timespec="seconds"),
+                            "date_publication": article_date, "premiere_detection": now.isoformat(timespec="seconds"),
                             "statut": "Article à vérifier"}
             seen.add(url)
             detected += 1
     if not successes:
         raise RuntimeError("Aucune source disponible : " + "; ".join(errors))
-    result = {"derniere_veille": now.isoformat(timespec="seconds"),
+    result = {"debut_veille": start.isoformat(),
+              "derniere_veille": now.isoformat(timespec="seconds"),
               "sources_interrogees": successes, "nouvelles_references": detected,
               "requêtes_en_echec": len(errors),
               "articles": sorted(entries.values(), key=lambda a: (a["date_publication"], a["id"]), reverse=True)[:300]}

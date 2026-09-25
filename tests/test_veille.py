@@ -14,8 +14,9 @@ class TestVeille(unittest.TestCase):
             root = Path(tmp)
             (root / 'data').mkdir()
             (root / 'layers').mkdir()
-            (root / 'data/veille_config.json').write_text('{"enabled":true}')
-            (root / 'data/veille.json').write_text('{"articles":[]}')
+            (root / 'data/veille_config.json').write_text('{"enabled":true,"start_date":"2026-09-01"}')
+            (root / 'data/veille.json').write_text(json.dumps({'articles': [
+                {'id': 'old-entry', 'url': 'https://news.test/old', 'date_publication': '2026-08-31'}]}))
             layer = 'var json_LIEUDESUICIDE_2 = {"features":[{"properties":{"url_source":"https://old.test/already","source_sec":""}}]};'
             (root / 'layers/LIEUDESUICIDE_2.js').write_text(layer)
 
@@ -25,6 +26,7 @@ class TestVeille(unittest.TestCase):
                     {'url': 'https://news.test/story?utm_source=b', 'title': 'Suicide à Abidjan', 'seendate': '20260925T123000Z'},
                     {'url': 'https://old.test/already', 'title': 'Suicide', 'seendate': '20260925T123000Z'},
                     {'url': 'https://news.test/irrelevant', 'title': 'Festival culturel', 'seendate': '20260925T123000Z'},
+                    {'url': 'https://news.test/august', 'title': 'Suicide en août', 'seendate': '20260831T123000Z'},
                 ]
 
             with patch.multiple(veille, ROOT=root, OUTPUT=root / 'data/veille.json',
@@ -33,6 +35,7 @@ class TestVeille(unittest.TestCase):
                     out = veille.collect(fake_fetch, datetime(2026, 9, 25, 16, tzinfo=timezone.utc))
                 self.assertEqual(1, len(out['articles']))
                 self.assertEqual(1, out['nouvelles_references'])
+                self.assertEqual('2026-09-01', out['debut_veille'])
                 self.assertEqual(layer, (root / 'layers/LIEUDESUICIDE_2.js').read_text())
                 self.assertEqual(out, json.loads((root / 'data/veille.json').read_text()))
 

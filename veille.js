@@ -12,8 +12,11 @@
     }
     const last = new Date(data.derniere_veille);
     const date = Number.isNaN(last.getTime()) ? 'date inconnue' : last.toLocaleString('fr-FR', {dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Abidjan'});
+    const start = typeof data.debut_veille === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.debut_veille)
+      ? new Date(data.debut_veille + 'T00:00:00Z').toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'})
+      : null;
     const entries = Array.isArray(data.articles) ? data.articles : [];
-    state.textContent = `Dernière veille : ${date} · ${data.sources_interrogees || 0} recherches réussies · ${entries.length} liens à vérifier${data.requêtes_en_echec ? ` · ${data.requêtes_en_echec} recherche(s) indisponible(s)` : ''}.`;
+    state.textContent = `${start ? `Depuis le ${start} · ` : ''}Dernière veille : ${date} · ${data.sources_interrogees || 0} recherches réussies · ${entries.length} liens à vérifier${data.requêtes_en_echec ? ` · ${data.requêtes_en_echec} recherche(s) indisponible(s)` : ''}.`;
     if (!entries.length) {
       list.textContent = 'Aucune nouvelle référence repérée sur la période surveillée.';
       return;
