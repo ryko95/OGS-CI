@@ -1,8 +1,8 @@
 {
   "debut_veille": "2026-09-01",
-  "derniere_veille": "2026-09-27T06:36:22+00:00",
+  "derniere_veille": "2026-09-27T13:01:45+00:00",
   "sources_interrogees": 3,
-  "nouvelles_references": 0,
+  "nouvelles_references": 1,
   "requêtes_en_echec": 1,
   "articles": [
     {
@@ -19,6 +19,14 @@
       "domaine": "news.google.com",
       "date_publication": "2026-09-03",
       "premiere_detection": "2026-09-25T16:39:42+00:00",
+      "statut": "Article à vérifier"
+    },
+    {
+      "id": "dbfec22c14c66d0cf360",
+      "url": "https://news.google.com/rss/articles/CBMi_wFBVV95cUxQWEZCY196b3VyUlNtOXJIbWR0b1Fad0w4M1BjMHd1cndMSWhYYVo3cHJVRFdvYUk2VFNabl9lcllpYTM3bEF6cWpBaG9sQnZZS3pKOFd0WDc3LWRkME5NRl9oTS05Ul81aEZ5T0F1c0lLSUVZMDdvTUhlVUM1S0F6QWFFMmdiV2tONXNGWmZrZW1oUmV1aElncTNKd29LVGYzRGJqa3VWQTBqcTJndmwzaGtONmF4YVBkT3dpM25qNFhEMVJnLTJkOU9NUFMybkpPOFN3UHp5T3FOYklMc05ldGJpQVpUZlF0ZjdLazREbUN2MDdJaGV2VXlFM1FoWGc?oc=5",
+      "domaine": "news.google.com",
+      "date_publication": "2026-09-03",
+      "premiere_detection": "2026-09-27T13:01:45+00:00",
       "statut": "Article à vérifier"
     }
   ]
