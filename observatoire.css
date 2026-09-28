@@ -34,3 +34,65 @@
 .veille-list{max-height:210px;overflow:auto;border-top:1px solid #e2e8f0;margin:8px 0}.veille-item{padding:7px 2px;border-bottom:1px solid #e2e8f0;font-size:11px;overflow-wrap:anywhere}.veille-item a{color:#075985;font-weight:700}.veille-item small{color:#64748b}
 .visit-counter #visitCount{font-size:15px;font-weight:900;color:#fff}.visit-eye{font-size:14px}.visit-counter span:last-child{color:#dbeafe;font-weight:700}
 @media(max-width:980px){.visit-counter span:last-child{display:none}.visit-counter{padding:7px 9px}}
+
+/* Responsive layout: keep the map and all information readable on small screens. */
+#app{grid-template-rows:auto minmax(0,1fr);height:100dvh}
+.topbar{min-height:64px;flex-wrap:wrap}
+.brand{flex:1 1 260px;min-width:0}
+.brand-mark{flex-shrink:0}
+.top-actions{align-items:center}
+.field-row>*{min-width:0}
+@media(min-width:851px) and (max-width:1150px){
+  .workspace{grid-template-columns:260px minmax(0,1fr) 270px}
+  .map-wrap{display:flex;flex-direction:column}
+  #map{flex:1;min-height:0}
+  .map-badge,.author-badge{position:static;max-width:none;margin:4px 8px;flex-shrink:0}
+}
+@media(max-width:850px){
+  html,body{height:auto;min-height:100%;overflow:auto}
+  #app{display:flex;flex-direction:column;height:auto;min-height:100dvh}
+  .topbar{position:relative;gap:8px;padding:12px;align-items:center}
+  .brand{flex:1 1 0}
+  .brand h1{font-size:clamp(14px,3.8vw,18px);line-height:1.35;overflow-wrap:anywhere}
+  .brand-mark{width:36px;height:36px;font-size:18px}
+  .top-actions{width:100%;margin:4px 0 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .top-actions button,.visit-counter{min-height:44px;padding:8px;font-size:12px;justify-content:center}
+  .visit-counter span:last-child{display:inline}
+  .workspace{display:flex;flex-direction:column;min-width:0}
+  .map-wrap{order:1;height:auto;display:flex;flex-direction:column;background:#edf2f7}
+  #map{height:60vh!important;height:60svh!important;min-height:280px;flex:none}
+  .map-badge,.author-badge{position:static;inset:auto;max-width:none;margin:8px 12px 0;padding:10px 12px;font-size:12px;line-height:1.5;box-shadow:none}
+  .author-badge{margin-bottom:12px}
+  .side,.side.right{width:100%;overflow:visible;border:0;min-width:0}
+  .side.left{order:2}
+  .side.right{order:3}
+  .panel{padding:16px}
+  .panel h2{font-size:16px}
+  .muted,.switchline,.stat .l,.footer-note{font-size:12px;line-height:1.5}
+  .field-row label{font-size:12px}
+  .field-row select,.field-row input,.field-row textarea{font-size:16px;min-height:44px}
+  .field-row.inline{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .btn,.btn.small,.tab{min-height:44px;font-size:12px}
+  .tabs{flex-wrap:wrap}
+  .tab{flex:1 1 90px}
+  .result-table{font-size:12px}
+  .result-table th,.result-table td{padding:9px 6px}
+  .barrow{font-size:12px;grid-template-columns:minmax(80px,30%) minmax(0,1fr) 32px}
+  .veille-item{font-size:13px}
+  .ol-popup{min-width:0!important;width:min(350px,calc(100vw - 40px));max-width:calc(100vw - 40px)!important}
+  #popup-content{max-height:45vh;max-height:45svh}
+  .popup-row{grid-template-columns:1fr;gap:4px}
+  .popup-label,.popup-value{font-size:12px}
+  .ol-popup-closer{width:40px;height:40px;top:4px!important;right:4px!important}
+  .modal{padding:10px}
+  .modal-card{width:100%;max-height:calc(100dvh - 20px)}
+  .modal-head{gap:8px}
+  .close{width:44px;height:44px;flex-shrink:0}
+  .report-grid{grid-template-columns:minmax(0,1fr)}
+  .modal-body{padding:12px}
+  .ol-control button{min-width:36px;min-height:36px}
+  .layer-switcher .panel{max-width:calc(100vw - 24px);max-height:40svh;overflow:auto}
+}
+@media(max-width:360px){
+  .field-row.inline{grid-template-columns:minmax(0,1fr)}
+}
