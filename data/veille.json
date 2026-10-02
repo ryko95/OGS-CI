@@ -1,9 +1,9 @@
 {
   "debut_veille": "2026-09-01",
-  "derniere_veille": "2026-10-01T23:12:09+00:00",
-  "sources_interrogees": 3,
+  "derniere_veille": "2026-10-02T06:59:58+00:00",
+  "sources_interrogees": 4,
   "nouvelles_references": 0,
-  "requêtes_en_echec": 1,
+  "requêtes_en_echec": 0,
   "articles": [
     {
       "id": "f2dfbcf354125dadacaa",
