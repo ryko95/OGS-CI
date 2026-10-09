@@ -107,3 +107,5 @@
 .timeline-svg{display:block;width:100%;min-width:300px;height:auto}.timeline-grid{stroke:#e2e8f0;stroke-width:1}.timeline-line{fill:none;stroke:#0f766e;stroke-width:2.5}.timeline-area{fill:#ccfbf1;opacity:.65}
 .timeline-svg text{font:10px sans-serif;fill:#475569}.month-dot{fill:#0f766e;stroke:white;stroke-width:2}.month-hit{fill:transparent;cursor:pointer}.month-point:focus{outline:none}.month-point:hover .month-dot,.month-point:focus .month-dot,.month-point.selected .month-dot{fill:#b91c1c;stroke:#b91c1c;stroke-width:3}.timeline-selection{font-size:12px;line-height:1.5;margin:9px 0;color:#0f766e;font-weight:700}
 .timeline-panel [hidden],.additions-panel [hidden]{display:none!important}
+
+.new-cases-alert:disabled{cursor:default;opacity:1}

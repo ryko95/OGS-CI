@@ -86,11 +86,12 @@ function renderTimeline(){
   $('timelineNote').textContent=`${data.length?monthLabel(data[0].key)+' – '+monthLabel(data[data.length-1].key)+'. ':''}${data.reduce((n,d)=>n+d.count,0)} cas sur la courbe. ${series.undated} cas sans date des faits exploitable exclus de la courbe (sur ${queryCases.length} résultats de la requête).${series.future?' '+series.future+' date(s) future(s) exclue(s).':''}`;
 }
 function renderNewCases(){
-  const additions=OGSTime.recentAdditions(caseFeatures.map(f=>f.getProperties()));
-  const button=$('newCasesAlert');
-  button.textContent=additions.length?`● ${additions.length} nouveau${additions.length>1?'x':''} cas ajouté${additions.length>1?'s':''} — Voir`:'Aucun nouveau cas ajouté depuis 30 jours';
+  const additions=OGSTime.monthlyAdditions(caseFeatures.map(f=>f.getProperties()));
+  const button=$('newCasesAlert'),period=monthFormatter.format(new Date());
+  $('newCasesList').hidden=true;button.setAttribute('aria-expanded','false');
+  button.textContent=additions.length?`● ${additions.length} nouveau${additions.length>1?'x':''} cas ajouté${additions.length>1?'s':''} en ${period} — Voir`:`Aucun nouveau cas intégré en ${period}`;
   button.classList.toggle('is-empty',!additions.length);button.disabled=!additions.length;
-  $('newCasesList').innerHTML='<p class="muted">Cas validés et ajoutés à la carte au cours des 30 derniers jours. La date d’ajout est distincte de la date des faits.</p>'+additions.map(p=>`<div class="addition-item"><strong>${esc(p.localite)}</strong><small>Faits : ${esc(p.date_evene||'date non précisée')} · Ajout : ${esc(p.date_ajout)}</small><small>Validation : ${esc(p.validation_par)}</small><button class="btn ghost small addition-open" data-event="${esc(p.id_eveneme)}" type="button">Voir sur la carte</button></div>`).join('');
+  $('newCasesList').innerHTML=`<p class="muted">Cas validés et intégrés en ${esc(period)}. La date d’ajout est distincte de la date des faits.</p>`+additions.map(p=>`<div class="addition-item"><strong>${esc(p.localite)}</strong><small>Faits : ${esc(p.date_evene||'date non précisée')} · Ajout : ${esc(p.date_ajout)}</small><small>Validation : ${esc(p.validation_par)}</small><button class="btn ghost small addition-open" data-event="${esc(p.id_eveneme)}" type="button">Voir sur la carte</button></div>`).join('');
   $('newCasesList').querySelectorAll('[data-event]').forEach(button=>button.onclick=()=>focusNewCase(button.dataset.event));
   button.onclick=()=>{
     if(additions.length===1){focusNewCase(additions[0].id_eveneme);return;}
@@ -104,6 +105,11 @@ function focusNewCase(id){
   if(window.matchMedia('(max-width:850px)').matches)$('map').scrollIntoView({behavior:'smooth',block:'center'});
 }
 renderNewCases();
+// Keep the calendar-month alert accurate even when a visitor leaves the page open.
+let alertMonth=new Date().toISOString().slice(0,7);
+function refreshAlertMonth(){const next=new Date().toISOString().slice(0,7);if(next!==alertMonth){alertMonth=next;renderNewCases();}}
+setInterval(refreshAlertMonth,60000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshAlertMonth();});
 
 let heatSource=new ol.source.Vector(), heatLayer=new ol.layer.Heatmap({source:heatSource,blur:18,radius:24,weight:()=>1,visible:false});map.addLayer(heatLayer);
 function syncHeat(){heatSource.clear();heatSource.addFeatures(currentCases.map(f=>f.clone()));}

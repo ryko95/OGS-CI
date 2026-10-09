@@ -29,13 +29,13 @@ function monthlySeries(records,year,now=new Date(),startKey=null){
   }
   return {months,undated,future,dated:records.length-undated-future};
 }
-function recentAdditions(records,now=new Date()){
+function monthlyAdditions(records,now=new Date()){
   const today=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
   return records.filter(p=>{
-    const date=parseDate(p.date_ajout),age=date?(today-date.getTime())/86400000:-1;
-    return p.validation_par&&date&&age>=0&&age<30;
+    const date=parseDate(p.date_ajout);
+    return p.validation_par&&date&&date.getTime()<=today&&date.getUTCFullYear()===now.getUTCFullYear()&&date.getUTCMonth()===now.getUTCMonth();
   }).sort((a,b)=>parseDate(b.date_ajout)-parseDate(a.date_ajout));
 }
-const api={parseDate,monthKey,monthlySeries,recentAdditions};
+const api={parseDate,monthKey,monthlySeries,monthlyAdditions};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;else root.OGSTime=api;
 })(typeof window!=='undefined'?window:globalThis);

@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {parseDate,monthKey,monthlySeries,recentAdditions}=require('../dashboard-time.js');
+const {parseDate,monthKey,monthlySeries,monthlyAdditions}=require('../dashboard-time.js');
 assert.equal(monthKey('02/09/2026'),'2026-09');
 assert.equal(monthKey('2026-09-02'),'2026-09');
 for(const value of ['',null,'2026','31/02/2026','2026-13-01'])assert.equal(parseDate(value),null);
@@ -11,9 +11,13 @@ assert.equal(monthlySeries(records,'all',new Date('2026-10-09T12:00:00Z')).month
 assert.equal(monthlySeries([],'all').months.length,0);
 const now=new Date('2026-10-09T12:00:00Z');
 const additions=[{id:1,validation_par:'Dr SREU Eric',date_ajout:'2026-10-09'},{id:2,validation_par:'Dr SREU Eric',date_ajout:'2026-09-10'},{id:3,validation_par:'Dr SREU Eric',date_ajout:'2026-09-09'},{id:4,date_ajout:'2026-10-09'},{id:5,validation_par:'Dr SREU Eric',date_ajout:'2026-10-10'}];
-assert.deepEqual(recentAdditions(additions,now).map(p=>p.id),[1,2]);
-console.log('PASS: event dates, leap years, empty months, missing dates, year range, validated alerts and 30-day boundary.');
+assert.deepEqual(monthlyAdditions(additions,now).map(p=>p.id),[1]);
+console.log('PASS: event dates, leap years, empty months, missing dates, year range, validated alerts and calendar month boundary.');
 
 const globalSeries=monthlySeries([{date_evene:'21/05/2014'},{date_evene:'02/09/2026'}],'all',now);
 assert.equal(globalSeries.months[0].key,'2014-05');assert.equal(globalSeries.months.at(-1).key,'2026-10');assert.equal(globalSeries.months.length,150);
 assert.equal(monthlySeries([{date_evene:'10/10/2026'}],'2026',now).future,1);
+
+assert.deepEqual(monthlyAdditions([{id:1,validation_par:'Dr SREU Eric',date_ajout:'2026-09-30'},{id:2,validation_par:'Dr SREU Eric',date_ajout:'2026-10-01'}],new Date('2026-10-01T00:00:00Z')).map(p=>p.id),[2]);
+assert.deepEqual(monthlyAdditions(additions,new Date('2026-11-01T00:00:00Z')),[]);
+assert.deepEqual(monthlyAdditions([{validation_par:'Dr SREU Eric',date_ajout:'2026-12-31'}],new Date('2027-01-01T00:00:00Z')),[]);
