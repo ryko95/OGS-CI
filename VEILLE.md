@@ -32,7 +32,7 @@ Le cas `CIV-S-2026-001`, survenu à Cocody le 2 septembre 2026 et publié par KO
 
 ## Courbe mensuelle et alerte des nouveaux cas
 
-La courbe regroupe les points selon `date_evene` (JJ/MM/AAAA ou AAAA-MM-JJ). Les dates absentes ou invalides ne sont jamais remplacées par une date de publication ; leur nombre est affiché séparément. Le sélecteur d’année limite la courbe. Un clic sur un mois applique un filtre supplémentaire aux points, aux résultats, aux indicateurs et à la heatmap ; « Retirer le filtre mensuel » retrouve la requête initiale. Lancer ou réinitialiser une requête retire ce filtre mensuel.
+La courbe regroupe les points selon `date_evene` (JJ/MM/AAAA ou AAAA-MM-JJ). Les dates absentes ou invalides ne sont jamais remplacées par une date de publication ; leur nombre est affiché séparément. La vue globale est affichée en premier, du premier mois documenté au mois courant, sans mois futurs et sans défilement horizontal nécessaire. La courbe précède les chiffres du tableau de bord. Le sélecteur permet ensuite de détailler une année. Un clic sur un mois applique un filtre supplémentaire aux points, aux résultats, aux indicateurs et à la heatmap ; « Retirer le filtre mensuel » retrouve la requête initiale. Lancer ou réinitialiser une requête retire ce filtre mensuel.
 
 Pour chaque ajout validé par le responsable, renseigner dans les propriétés du point :
 
@@ -40,4 +40,4 @@ Pour chaque ajout validé par le responsable, renseigner dans les propriétés d
 - `validation_par` : nom du responsable ayant validé l’intégration ;
 - `date_evene` : date des faits, si connue, distincte de la date d’ajout.
 
-Le bouton rouge en tête du tableau de bord est calculé automatiquement à partir des cas déjà présents dans la couche, ayant un validateur et une date d’ajout de moins de 30 jours (jour UTC, identique à Abidjan). Il permet de consulter la liste puis d’ouvrir chaque cas sur la carte. La veille médiatique et les signalements locaux non validés ne déclenchent pas cette alerte. Sans ces métadonnées, une entrée ne sera pas présentée comme un nouvel ajout validé. Le cas CIV-S-2026-001 porte la date d’ajout du 2026-10-09.
+Le bouton rouge en tête du tableau de bord est calculé automatiquement à partir des cas déjà présents dans la couche, ayant un validateur et une date d’ajout de moins de 30 jours (jour UTC, identique à Abidjan). Avec un seul nouvel ajout, un clic sur le bouton centre directement la carte sur ce point sans popup. Avec plusieurs ajouts, il affiche la liste ; chaque bouton « Voir sur la carte » centre le point sans popup. La veille médiatique et les signalements locaux non validés ne déclenchent pas cette alerte. Sans ces métadonnées, une entrée ne sera pas présentée comme un nouvel ajout validé. Le cas CIV-S-2026-001 porte la date d’ajout du 2026-10-09.

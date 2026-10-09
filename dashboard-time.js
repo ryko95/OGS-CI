@@ -11,16 +11,23 @@ function parseDate(value){
   return y>=1900&&date.getUTCFullYear()===y&&date.getUTCMonth()===m-1&&date.getUTCDate()===d?date:null;
 }
 function monthKey(value){const d=parseDate(value);return d?d.toISOString().slice(0,7):null;}
-function monthlySeries(records,year){
-  const counts=new Map();let undated=0;
-  records.forEach(p=>{const key=monthKey(p.date_evene);if(key)counts.set(key,(counts.get(key)||0)+1);else undated++;});
-  const years=[...counts.keys()].map(k=>Number(k.slice(0,4)));
-  const first=year==='all'?Math.min(...years):Number(year),last=year==='all'?Math.max(...years):Number(year);
+function monthlySeries(records,year,now=new Date(),startKey=null){
+  const counts=new Map();let undated=0,future=0;
+  const today=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+  const currentKey=now.toISOString().slice(0,7);
+  records.forEach(p=>{const date=parseDate(p.date_evene);if(!date){undated++;return;}if(date.getTime()>today){future++;return;}const key=monthKey(p.date_evene);counts.set(key,(counts.get(key)||0)+1);});
+  const keys=[...counts.keys()].sort();
+  const first=year==='all'?(startKey||keys[0]):year+'-01';
+  const last=year==='all'?currentKey:(Number(year)===now.getUTCFullYear()?currentKey:year+'-12');
   const months=[];
-  if(Number.isFinite(first)&&Number.isFinite(last))for(let y=first;y<=last;y++)for(let m=1;m<=12;m++){
-    const key=y+'-'+String(m).padStart(2,'0');months.push({key,count:counts.get(key)||0});
+  if(first&&first<=last&&Number(first.slice(0,4))<=now.getUTCFullYear()){
+    let y=Number(first.slice(0,4)),m=Number(first.slice(5));
+    while(y+'-'+String(m).padStart(2,'0')<=last){
+      const key=y+'-'+String(m).padStart(2,'0');months.push({key,count:counts.get(key)||0});
+      if(++m===13){m=1;y++;}
+    }
   }
-  return {months,undated,dated:records.length-undated};
+  return {months,undated,future,dated:records.length-undated-future};
 }
 function recentAdditions(records,now=new Date()){
   const today=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());

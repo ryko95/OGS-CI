@@ -49,8 +49,9 @@ function renderResults(){$('resultBody').innerHTML=currentCases.slice(0,150).map
 function updateAll(){updateKPIs();renderChart();renderResults();updateLegend();renderTimeline();}
 // The curve follows attribute/region queries; clicking a month further filters points.
 const timelineYears=[...new Set(caseFeatures.map(f=>OGSTime.monthKey(f.get('date_evene'))).filter(Boolean).map(k=>k.slice(0,4)))].sort().reverse();
-$('timelineYear').innerHTML=timelineYears.map(y=>`<option value="${y}">${y}</option>`).join('')+'<option value="all">Toutes les années</option>';
-if(timelineYears.length)$('timelineYear').value=timelineYears[0];
+$('timelineYear').innerHTML='<option value="all">Vue globale — du début à aujourd’hui</option>'+timelineYears.map(y=>`<option value="${y}">${y}</option>`).join('');
+$('timelineYear').value='all';
+const timelineStart=caseFeatures.map(f=>OGSTime.monthKey(f.get('date_evene'))).filter(Boolean).sort()[0];
 const monthFormatter=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric',timeZone:'UTC'});
 const monthShort=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
 function monthLabel(key){return monthFormatter.format(new Date(key+'-01T00:00:00Z'));}
@@ -63,17 +64,17 @@ function selectMonth(key){selectedMonth=selectedMonth===key?null:key;applyMonth(
 $('timelineYear').onchange=()=>{selectedMonth=null;applyMonth();};
 $('clearMonth').onclick=()=>{selectedMonth=null;applyMonth();};
 function renderTimeline(){
-  const year=$('timelineYear').value,series=OGSTime.monthlySeries(queryCases.map(f=>f.getProperties()),year);
-  const data=series.months,width=Math.max(320,data.length*28+42),height=200,left=28,right=14,top=25,bottom=150;
+  const year=$('timelineYear').value,series=OGSTime.monthlySeries(queryCases.map(f=>f.getProperties()),year,new Date(),timelineStart);
+  const data=series.months,width=360,height=200,left=28,right=14,top=25,bottom=150;
   const max=Math.max(1,...data.map(d=>d.count));
   const x=i=>left+i*(width-left-right)/Math.max(1,data.length-1),y=n=>bottom-n*(bottom-top)/max;
   const ticks=[...new Set([0,Math.ceil(max/2),max])];
   const points=data.map((d,i)=>`${x(i)},${y(d.count)}`).join(' ');
-  $('timelineChart').innerHTML=data.length?`<svg class="timeline-svg" style="min-width:${width}px" viewBox="0 0 ${width} ${height}" role="group" aria-label="Courbe des cas documentés par mois, ${esc(year==='all'?'toutes les années':year)}">
+  $('timelineChart').innerHTML=data.length?`<svg class="timeline-svg" style="min-width:0" viewBox="0 0 ${width} ${height}" role="group" aria-label="Courbe des cas documentés par mois, ${esc(year==='all'?'toutes les années':year)}">
     ${ticks.map(n=>`<line class="timeline-grid" x1="${left}" x2="${width-right}" y1="${y(n)}" y2="${y(n)}"/><text x="4" y="${y(n)+4}">${n}</text>`).join('')}
     <polygon class="timeline-area" points="${left},${bottom} ${points} ${x(data.length-1)},${bottom}"/>
     <polyline class="timeline-line" points="${points}"/>
-    ${data.map((d,i)=>`<g class="month-point ${selectedMonth===d.key?'selected':''}" tabindex="0" role="button" data-month="${d.key}" aria-pressed="${selectedMonth===d.key}" aria-label="${esc(monthLabel(d.key))} : ${d.count} cas documenté(s). Filtrer ce mois."><title>${esc(monthLabel(d.key))} : ${d.count} cas documenté(s)</title><circle class="month-dot" cx="${x(i)}" cy="${y(d.count)}" r="4"/><rect class="month-hit" x="${x(i)-12}" y="${top-12}" width="24" height="${bottom-top+24}"/>${year!=='all'||i%3===0?`<text x="${x(i)}" y="171" text-anchor="middle">${monthShort[Number(d.key.slice(5))-1]}</text>`:''}${year==='all'&&i%12===0?`<text x="${x(i)}" y="187" text-anchor="middle">${d.key.slice(0,4)}</text>`:''}</g>`).join('')}</svg>`:'<p class="muted">Aucune date d’événement exploitable dans cette sélection.</p>';
+    ${data.map((d,i)=>`<g class="month-point ${selectedMonth===d.key?'selected':''}" tabindex="0" role="button" data-month="${d.key}" aria-pressed="${selectedMonth===d.key}" aria-label="${esc(monthLabel(d.key))} : ${d.count} cas documenté(s). Filtrer ce mois."><title>${esc(monthLabel(d.key))} : ${d.count} cas documenté(s)</title><circle class="month-dot" cx="${x(i)}" cy="${y(d.count)}" r="${year==='all'?1.8:4}"/><rect class="month-hit" x="${x(i)-Math.min(12,(width-left-right)/Math.max(1,data.length-1)/2)}" y="${top-12}" width="${Math.min(24,(width-left-right)/Math.max(1,data.length-1))}" height="${bottom-top+24}"/>${year!=='all'?`<text x="${x(i)}" y="171" text-anchor="middle">${monthShort[Number(d.key.slice(5))-1]}</text>`:''}${year==='all'&&(i===0||(d.key.endsWith('-01')&&Number(d.key.slice(0,4))%2===0))?`<text x="${x(i)}" y="187" text-anchor="middle">${d.key.slice(0,4)}</text>`:''}</g>`).join('')}</svg>`:'<p class="muted">Aucune date d’événement exploitable dans cette sélection.</p>';
   $('timelineChart').querySelectorAll('[data-month]').forEach(el=>{
     el.onclick=()=>selectMonth(el.dataset.month);
     el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const key=el.dataset.month;selectMonth(key);$('timelineChart').querySelector(`[data-month="${key}"]`).focus();}};
@@ -82,7 +83,7 @@ function renderTimeline(){
   });
   $('timelineSelection').textContent=selectedMonth?`Filtre actif : ${monthLabel(selectedMonth)} — ${currentCases.length} cas.`:'Aucun filtre mensuel actif : tous les résultats de la requête restent affichés sur la carte.';
   $('clearMonth').hidden=!selectedMonth;
-  $('timelineNote').textContent=`${data.reduce((n,d)=>n+d.count,0)} cas sur la courbe. ${series.undated} cas sans date des faits exploitable exclus de la courbe (sur ${queryCases.length} résultats de la requête).`;
+  $('timelineNote').textContent=`${data.length?monthLabel(data[0].key)+' – '+monthLabel(data[data.length-1].key)+'. ':''}${data.reduce((n,d)=>n+d.count,0)} cas sur la courbe. ${series.undated} cas sans date des faits exploitable exclus de la courbe (sur ${queryCases.length} résultats de la requête).${series.future?' '+series.future+' date(s) future(s) exclue(s).':''}`;
 }
 function renderNewCases(){
   const additions=OGSTime.recentAdditions(caseFeatures.map(f=>f.getProperties()));
@@ -90,15 +91,18 @@ function renderNewCases(){
   button.textContent=additions.length?`● ${additions.length} nouveau${additions.length>1?'x':''} cas ajouté${additions.length>1?'s':''} — Voir`:'Aucun nouveau cas ajouté depuis 30 jours';
   button.classList.toggle('is-empty',!additions.length);button.disabled=!additions.length;
   $('newCasesList').innerHTML='<p class="muted">Cas validés et ajoutés à la carte au cours des 30 derniers jours. La date d’ajout est distincte de la date des faits.</p>'+additions.map(p=>`<div class="addition-item"><strong>${esc(p.localite)}</strong><small>Faits : ${esc(p.date_evene||'date non précisée')} · Ajout : ${esc(p.date_ajout)}</small><small>Validation : ${esc(p.validation_par)}</small><button class="btn ghost small addition-open" data-event="${esc(p.id_eveneme)}" type="button">Voir sur la carte</button></div>`).join('');
-  $('newCasesList').querySelectorAll('[data-event]').forEach(button=>button.onclick=()=>{
-    $('qRegionField').value='';$('qRegionValue').value='';$('qCaseField').value='id_eveneme';$('qCaseOp').value='eq';$('qCaseValue').value=button.dataset.event;
-    const feature=caseFeatures.find(f=>f.get('id_eveneme')===button.dataset.event);
-    const key=OGSTime.monthKey(feature.get('date_evene'));if(key)$('timelineYear').value=key.slice(0,4);
-    runQuery();fitFeatures([feature]);showCasePopup(feature);
-    if(window.matchMedia('(max-width:850px)').matches)$('map').scrollIntoView({behavior:'smooth',block:'center'});
-  });
+  $('newCasesList').querySelectorAll('[data-event]').forEach(button=>button.onclick=()=>focusNewCase(button.dataset.event));
+  button.onclick=()=>{
+    if(additions.length===1){focusNewCase(additions[0].id_eveneme);return;}
+    const open=$('newCasesList').hidden;$('newCasesList').hidden=!open;button.setAttribute('aria-expanded',String(open));
+  };
 }
-$('newCasesAlert').onclick=()=>{const open=$('newCasesList').hidden;$('newCasesList').hidden=!open;$('newCasesAlert').setAttribute('aria-expanded',String(open));};
+function focusNewCase(id){
+  const feature=caseFeatures.find(f=>f.get('id_eveneme')===id);if(!feature)return;
+  $('qRegionField').value='';$('qRegionValue').value='';$('qCaseField').value='id_eveneme';$('qCaseOp').value='eq';$('qCaseValue').value=id;
+  runQuery();overlayPopup.setPosition(undefined);container.style.display='none';fitFeatures([feature]);
+  if(window.matchMedia('(max-width:850px)').matches)$('map').scrollIntoView({behavior:'smooth',block:'center'});
+}
 renderNewCases();
 
 let heatSource=new ol.source.Vector(), heatLayer=new ol.layer.Heatmap({source:heatSource,blur:18,radius:24,weight:()=>1,visible:false});map.addLayer(heatLayer);

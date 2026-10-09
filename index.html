@@ -26,10 +26,9 @@
 <div id="newCasesList" hidden></div>
 </section>
 <section class="panel" aria-labelledby="veilleTitle"><h2 id="veilleTitle">📰 Veille médiatique</h2><p id="veilleEtat" class="muted" role="status">Chargement de la veille…</p><div id="veilleLiens" class="veille-list"></div><p class="muted">Références détectées automatiquement. Un lien peut concerner un cas déjà connu, plusieurs cas ou aucun cas en Côte d’Ivoire. Aucun lien n’entre dans les statistiques ou sur la carte sans vérification.</p></section>
-<section class="panel"><h2>📊 Tableau de bord</h2><div class="stat-grid"><div class="stat"><div class="n" id="kpiCases">0</div><div class="l">Cas affichés</div></div><div class="stat"><div class="n" id="kpiRegions">0</div><div class="l">Régions concernées</div></div><div class="stat"><div class="n" id="kpiMale">0</div><div class="l">Hommes</div></div><div class="stat"><div class="n" id="kpiFemale">0</div><div class="l">Femmes</div></div></div></section>
 <section class="panel timeline-panel" aria-labelledby="timelineTitle">
 <h2 id="timelineTitle">Évolution mensuelle des cas</h2>
-<div class="field-row"><label for="timelineYear">Année de la courbe</label><select id="timelineYear"></select></div>
+<div class="field-row"><label for="timelineYear">Période de la courbe</label><select id="timelineYear"></select></div>
 <p class="muted">Cliquez sur un mois pour filtrer la carte et le tableau de bord. Survolez un point pour voir son effectif.</p>
 <div id="timelineScroll" class="timeline-scroll"><div id="timelineChart"></div></div>
 <div id="timelineSelection" class="timeline-selection" role="status"></div>
@@ -37,6 +36,7 @@
 <p id="timelineNote" class="muted"></p>
 <p class="muted">0 signifie aucun cas documenté pour ce mois dans la sélection, pas une absence réelle de suicides. Les dates des faits sont utilisées ; les dates de publication ne les remplacent pas.</p>
 </section>
+<section class="panel"><h2>📊 Tableau de bord</h2><div class="stat-grid"><div class="stat"><div class="n" id="kpiCases">0</div><div class="l">Cas affichés</div></div><div class="stat"><div class="n" id="kpiRegions">0</div><div class="l">Régions concernées</div></div><div class="stat"><div class="n" id="kpiMale">0</div><div class="l">Hommes</div></div><div class="stat"><div class="n" id="kpiFemale">0</div><div class="l">Femmes</div></div></div></section>
 <section class="panel"><div class="tabs"><button class="tab active" data-tab="region">Par région</button><button class="tab" data-tab="sex">Par sexe</button><button class="tab" data-tab="place">Par lieu</button><button class="tab" data-tab="method">Méthode</button></div><div id="chart"></div></section>
 <section class="panel"><h2>🔥 Densité spatiale</h2><label class="switchline"><input type="checkbox" id="heatToggle"> Activer la heatmap des cas affichés</label><div class="field-row inline"><div><label>Rayon</label><input type="range" min="8" max="45" value="24" id="heatRadius"></div><div><label>Flou</label><input type="range" min="5" max="35" value="18" id="heatBlur"></div></div><p class="muted">La heatmap met en évidence les concentrations spatiales. Elle ne doit pas être interprétée comme un taux de risque sans dénominateur de population.</p></section>
 <section class="panel"><h2>🏥 Services de soins publics</h2><label class="switchline"><input type="checkbox" id="careToggle" checked> Afficher les services disponibles</label><p class="muted">La couche existante des services de soins est conservée afin d’aider à contextualiser l’offre de prise en charge.</p></section>
