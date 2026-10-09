@@ -2,6 +2,7 @@
 'use strict';
 const regionFeatures=features_REGIONSANITAIRE_1, caseFeatures=features_LIEUDESUICIDE_2;
 const originalRegionStyle=style_REGIONSANITAIRE_1, originalCaseStyle=style_LIEUDESUICIDE_2;
+let queryCases=[...caseFeatures], selectedMonth=null;
 let currentCases=[...caseFeatures], currentRegions=[...regionFeatures], selectedTheme='', themeMode='auto', activeTab='region', pickMode=false;
 const $=id=>document.getElementById(id);
 const trimKey=k=>String(k||'').trim();
@@ -36,8 +37,8 @@ function updateLegend(){const box=$('themeLegend');if(!selectedTheme){box.innerH
 function refreshTheme(){selectedTheme=$('themeField').value;themeMode=$('themeMode').value;lyr_REGIONSANITAIRE_1.changed();updateLegend();}
 $('themeField').onchange=refreshTheme;$('themeMode').onchange=refreshTheme;$('themeClasses').onchange=refreshTheme;
 function test(f,k,op,want){if(!k)return true;const raw=f.get(k), a=String(raw??'').trim(), b=String(want??'').trim();if(op==='empty')return !a;if(op==='notempty')return !!a;if(op==='contains')return norm(a).includes(norm(b));if(op==='eq')return norm(a)===norm(b);if(op==='neq')return norm(a)!==norm(b);const na=num(a),nb=num(b);if(op==='gt')return na>nb;if(op==='gte')return na>=nb;if(op==='lt')return na<nb;if(op==='lte')return na<=nb;return true;}
-function runQuery(){let rf=$('qRegionField').value, ro=$('qRegionOp').value, rv=$('qRegionValue').value, cf=$('qCaseField').value, co=$('qCaseOp').value, cv=$('qCaseValue').value;let regs=regionFeatures.filter(f=>test(f,rf,ro,rv)), cases=caseFeatures.filter(f=>test(f,cf,co,cv));if($('linkQueries').checked){if(rf){const keys=new Set(regs.map(f=>regionKey(regionName(f))));cases=cases.filter(f=>keys.has(regionKey(caseRegion(f))));}if(cf){const keys=new Set(cases.map(f=>regionKey(caseRegion(f))));regs=regs.filter(f=>keys.has(regionKey(regionName(f))));}}currentRegions=regs;currentCases=cases;lyr_REGIONSANITAIRE_1.changed();lyr_LIEUDESUICIDE_2.changed();syncHeat();updateAll();$('queryInfo').textContent=`${regs.length} région(s) et ${cases.length} cas correspondent aux critères.`;}
-$('runQuery').onclick=runQuery;$('resetQuery').onclick=()=>{['qRegionField','qCaseField'].forEach(id=>$(id).value='');['qRegionValue','qCaseValue'].forEach(id=>$(id).value='');currentRegions=[...regionFeatures];currentCases=[...caseFeatures];lyr_REGIONSANITAIRE_1.changed();lyr_LIEUDESUICIDE_2.changed();syncHeat();updateAll();$('queryInfo').textContent='Aucun filtre actif.';};
+function runQuery(){let rf=$('qRegionField').value, ro=$('qRegionOp').value, rv=$('qRegionValue').value, cf=$('qCaseField').value, co=$('qCaseOp').value, cv=$('qCaseValue').value;let regs=regionFeatures.filter(f=>test(f,rf,ro,rv)), cases=caseFeatures.filter(f=>test(f,cf,co,cv));if($('linkQueries').checked){if(rf){const keys=new Set(regs.map(f=>regionKey(regionName(f))));cases=cases.filter(f=>keys.has(regionKey(caseRegion(f))));}if(cf){const keys=new Set(cases.map(f=>regionKey(caseRegion(f))));regs=regs.filter(f=>keys.has(regionKey(regionName(f))));}}currentRegions=regs;queryCases=cases;selectedMonth=null;currentCases=cases;lyr_REGIONSANITAIRE_1.changed();lyr_LIEUDESUICIDE_2.changed();syncHeat();updateAll();$('queryInfo').textContent=`${regs.length} région(s) et ${cases.length} cas correspondent aux critères.`;}
+$('runQuery').onclick=runQuery;$('resetQuery').onclick=()=>{['qRegionField','qCaseField'].forEach(id=>$(id).value='');['qRegionValue','qCaseValue'].forEach(id=>$(id).value='');currentRegions=[...regionFeatures];queryCases=[...caseFeatures];selectedMonth=null;currentCases=[...caseFeatures];lyr_REGIONSANITAIRE_1.changed();lyr_LIEUDESUICIDE_2.changed();syncHeat();updateAll();$('queryInfo').textContent='Aucun filtre actif.';};
 function fitFeatures(fs){if(!fs.length)return;const e=ol.extent.createEmpty();fs.forEach(f=>ol.extent.extend(e,f.getGeometry().getExtent()));map.getView().fit(e,{padding:[40,40,40,40],maxZoom:12,duration:400});}
 $('zoomQuery').onclick=()=>fitFeatures(currentCases.length?currentCases:currentRegions);$('btnHome').onclick=()=>map.getView().fit(jsonSource_REGIONSANITAIRE_1.getExtent(),{padding:[20,20,20,20],duration:400});
 function countsBy(key,features=currentCases){const m=new Map();features.forEach(f=>{let v=f.get(key);if(v===null||v===undefined||String(v).trim()==='')v='Non précisé';const s=String(v).trim();m.set(s,(m.get(s)||0)+1)});return [...m.entries()].sort((a,b)=>b[1]-a[1]);}
@@ -45,7 +46,61 @@ function updateKPIs(){const regs=new Set(currentCases.map(f=>regionKey(caseRegio
 function renderChart(){let data,title;if(activeTab==='region'){data=countsBy('REGION');title='Cas documentés par région';}else if(activeTab==='sex'){data=countsBy('sexe');title='Répartition par sexe';}else if(activeTab==='place'){data=countsBy('categorie_');title='Types de lieux';}else{data=countsBy('methode_ge');title='Méthodes documentées';}const max=Math.max(1,...data.map(d=>d[1]));$('chart').innerHTML=`<h3>${title}</h3><div class="chart">${data.slice(0,16).map(([k,v])=>`<div class="barrow" title="${esc(k)}: ${v}"><div class="barlabel">${esc(k)}</div><div class="bartrack"><div class="bar ${activeTab==='place'?'cool':''}" style="width:${100*v/max}%"></div></div><b>${v}</b></div>`).join('')}</div>`;}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeTab=b.dataset.tab;renderChart();});
 function renderResults(){$('resultBody').innerHTML=currentCases.slice(0,150).map(f=>`<tr data-id="${esc(f.get('id_eveneme'))}"><td>${esc(f.get('localite')||'—')}</td><td>${esc(f.get('REGION')||'—')}</td><td>${esc(f.get('sexe')||'—')}</td><td>${esc(f.get('date_evene')||f.get('annee')||'—')}</td></tr>`).join('');document.querySelectorAll('#resultBody tr').forEach(tr=>tr.onclick=()=>{const f=caseFeatures.find(x=>String(x.get('id_eveneme'))===tr.dataset.id);if(f){fitFeatures([f]);showCasePopup(f);}});}
-function updateAll(){updateKPIs();renderChart();renderResults();updateLegend();}
+function updateAll(){updateKPIs();renderChart();renderResults();updateLegend();renderTimeline();}
+// The curve follows attribute/region queries; clicking a month further filters points.
+const timelineYears=[...new Set(caseFeatures.map(f=>OGSTime.monthKey(f.get('date_evene'))).filter(Boolean).map(k=>k.slice(0,4)))].sort().reverse();
+$('timelineYear').innerHTML=timelineYears.map(y=>`<option value="${y}">${y}</option>`).join('')+'<option value="all">Toutes les années</option>';
+if(timelineYears.length)$('timelineYear').value=timelineYears[0];
+const monthFormatter=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric',timeZone:'UTC'});
+const monthShort=['Jan','Fév','Mar','Avr','Mai','Juin','Juil','Août','Sep','Oct','Nov','Déc'];
+function monthLabel(key){return monthFormatter.format(new Date(key+'-01T00:00:00Z'));}
+function applyMonth(){
+  currentCases=selectedMonth?queryCases.filter(f=>OGSTime.monthKey(f.get('date_evene'))===selectedMonth):[...queryCases];
+  lyr_LIEUDESUICIDE_2.changed();syncHeat();updateAll();
+  $('queryInfo').textContent=`${currentRegions.length} région(s) et ${currentCases.length} cas affichés${selectedMonth?' — '+monthLabel(selectedMonth):''}.`;
+}
+function selectMonth(key){selectedMonth=selectedMonth===key?null:key;applyMonth();}
+$('timelineYear').onchange=()=>{selectedMonth=null;applyMonth();};
+$('clearMonth').onclick=()=>{selectedMonth=null;applyMonth();};
+function renderTimeline(){
+  const year=$('timelineYear').value,series=OGSTime.monthlySeries(queryCases.map(f=>f.getProperties()),year);
+  const data=series.months,width=Math.max(320,data.length*28+42),height=200,left=28,right=14,top=25,bottom=150;
+  const max=Math.max(1,...data.map(d=>d.count));
+  const x=i=>left+i*(width-left-right)/Math.max(1,data.length-1),y=n=>bottom-n*(bottom-top)/max;
+  const ticks=[...new Set([0,Math.ceil(max/2),max])];
+  const points=data.map((d,i)=>`${x(i)},${y(d.count)}`).join(' ');
+  $('timelineChart').innerHTML=data.length?`<svg class="timeline-svg" style="min-width:${width}px" viewBox="0 0 ${width} ${height}" role="group" aria-label="Courbe des cas documentés par mois, ${esc(year==='all'?'toutes les années':year)}">
+    ${ticks.map(n=>`<line class="timeline-grid" x1="${left}" x2="${width-right}" y1="${y(n)}" y2="${y(n)}"/><text x="4" y="${y(n)+4}">${n}</text>`).join('')}
+    <polygon class="timeline-area" points="${left},${bottom} ${points} ${x(data.length-1)},${bottom}"/>
+    <polyline class="timeline-line" points="${points}"/>
+    ${data.map((d,i)=>`<g class="month-point ${selectedMonth===d.key?'selected':''}" tabindex="0" role="button" data-month="${d.key}" aria-pressed="${selectedMonth===d.key}" aria-label="${esc(monthLabel(d.key))} : ${d.count} cas documenté(s). Filtrer ce mois."><title>${esc(monthLabel(d.key))} : ${d.count} cas documenté(s)</title><circle class="month-dot" cx="${x(i)}" cy="${y(d.count)}" r="4"/><rect class="month-hit" x="${x(i)-12}" y="${top-12}" width="24" height="${bottom-top+24}"/>${year!=='all'||i%3===0?`<text x="${x(i)}" y="171" text-anchor="middle">${monthShort[Number(d.key.slice(5))-1]}</text>`:''}${year==='all'&&i%12===0?`<text x="${x(i)}" y="187" text-anchor="middle">${d.key.slice(0,4)}</text>`:''}</g>`).join('')}</svg>`:'<p class="muted">Aucune date d’événement exploitable dans cette sélection.</p>';
+  $('timelineChart').querySelectorAll('[data-month]').forEach(el=>{
+    el.onclick=()=>selectMonth(el.dataset.month);
+    el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();const key=el.dataset.month;selectMonth(key);$('timelineChart').querySelector(`[data-month="${key}"]`).focus();}};
+    const describe=()=>{$('timelineSelection').textContent=`${monthLabel(el.dataset.month)} : ${data.find(d=>d.key===el.dataset.month).count} cas documenté(s).${selectedMonth?' Filtre actif : '+monthLabel(selectedMonth)+'.':''}`;};
+    el.onmouseenter=describe;el.onfocus=describe;
+  });
+  $('timelineSelection').textContent=selectedMonth?`Filtre actif : ${monthLabel(selectedMonth)} — ${currentCases.length} cas.`:'Aucun filtre mensuel actif : tous les résultats de la requête restent affichés sur la carte.';
+  $('clearMonth').hidden=!selectedMonth;
+  $('timelineNote').textContent=`${data.reduce((n,d)=>n+d.count,0)} cas sur la courbe. ${series.undated} cas sans date des faits exploitable exclus de la courbe (sur ${queryCases.length} résultats de la requête).`;
+}
+function renderNewCases(){
+  const additions=OGSTime.recentAdditions(caseFeatures.map(f=>f.getProperties()));
+  const button=$('newCasesAlert');
+  button.textContent=additions.length?`● ${additions.length} nouveau${additions.length>1?'x':''} cas ajouté${additions.length>1?'s':''} — Voir`:'Aucun nouveau cas ajouté depuis 30 jours';
+  button.classList.toggle('is-empty',!additions.length);button.disabled=!additions.length;
+  $('newCasesList').innerHTML='<p class="muted">Cas validés et ajoutés à la carte au cours des 30 derniers jours. La date d’ajout est distincte de la date des faits.</p>'+additions.map(p=>`<div class="addition-item"><strong>${esc(p.localite)}</strong><small>Faits : ${esc(p.date_evene||'date non précisée')} · Ajout : ${esc(p.date_ajout)}</small><small>Validation : ${esc(p.validation_par)}</small><button class="btn ghost small addition-open" data-event="${esc(p.id_eveneme)}" type="button">Voir sur la carte</button></div>`).join('');
+  $('newCasesList').querySelectorAll('[data-event]').forEach(button=>button.onclick=()=>{
+    $('qRegionField').value='';$('qRegionValue').value='';$('qCaseField').value='id_eveneme';$('qCaseOp').value='eq';$('qCaseValue').value=button.dataset.event;
+    const feature=caseFeatures.find(f=>f.get('id_eveneme')===button.dataset.event);
+    const key=OGSTime.monthKey(feature.get('date_evene'));if(key)$('timelineYear').value=key.slice(0,4);
+    runQuery();fitFeatures([feature]);showCasePopup(feature);
+    if(window.matchMedia('(max-width:850px)').matches)$('map').scrollIntoView({behavior:'smooth',block:'center'});
+  });
+}
+$('newCasesAlert').onclick=()=>{const open=$('newCasesList').hidden;$('newCasesList').hidden=!open;$('newCasesAlert').setAttribute('aria-expanded',String(open));};
+renderNewCases();
+
 let heatSource=new ol.source.Vector(), heatLayer=new ol.layer.Heatmap({source:heatSource,blur:18,radius:24,weight:()=>1,visible:false});map.addLayer(heatLayer);
 function syncHeat(){heatSource.clear();heatSource.addFeatures(currentCases.map(f=>f.clone()));}
 $('heatToggle').onchange=e=>heatLayer.setVisible(e.target.checked);$('btnHeat').onclick=()=>{$('heatToggle').checked=!$('heatToggle').checked;heatLayer.setVisible($('heatToggle').checked)};$('heatRadius').oninput=e=>heatLayer.setRadius(Number(e.target.value));$('heatBlur').oninput=e=>heatLayer.setBlur(Number(e.target.value));$('careToggle').onchange=e=>lyr_SERVICESDESOINSPUBLICS_3.setVisible(e.target.checked);
@@ -53,7 +108,7 @@ function popupValue(v){return (v===null||v===undefined||String(v).trim()==='')?'
 function popupRows(rows){return rows.filter(r=>r[1]!==null&&r[1]!==undefined&&String(r[1]).trim()!=='').map(r=>`<div class="popup-row"><div class="popup-label">${esc(r[0])}</div><div class="popup-value">${esc(popupValue(r[1]))}</div></div>`).join('');}
 function popupCard(type,icon,title,subtitle,rows,extra=''){content.innerHTML=`<div class="popup-card ${type}"><div class="popup-head"><div class="popup-icon">${icon}</div><div><div class="popup-title">${esc(title)}</div>${subtitle?`<div class="popup-subtitle">${esc(subtitle)}</div>`:''}</div></div><div class="popup-body">${popupRows(rows)}${extra}</div></div>`;container.style.display='block';}
 function sourceLink(p){let u='';if(p.url_source&&p.source_sec){u=String(p.url_source)+String(p.source_sec);}else{u=String(p.url_source||p.source_sec||'');}if(!/^https?:\/\//i.test(u))return '';return `<div class="popup-actions"><a class="popup-link" href="${esc(u)}" target="_blank" rel="noopener noreferrer">↗ Consulter la source</a></div>`;}
-function showCasePopup(f){const p=f.getProperties();const sexe=norm(p.sexe)==='M'?'Masculin':norm(p.sexe)==='F'?'Féminin':p.sexe;const rows=[['Identifiant du cas',p.id_eveneme],['Date de l’événement',p.date_evene],['Date du décès',p.date_deces],['Année',p.annee],['Localité',p.localite],['Région',p.REGION||p.regions],['District',p.district],['Type de milieu',p.type_milie],['Type de lieu',p.categorie_],['Sexe',sexe],['Âge',p.age],['Tranche d’âge',p.categori_1],['Statut professionnel',p.statut_pro],['Contexte / circonstances',p.contexte_p],['Méthode documentée',p.methode_ge],['Statut de confirmation',p.statut_con],['Niveau de preuve',p.niveau_pre],['Confirmation par',p.validation_par],['Confirmation reçue le',p.date_confirmation_recue],['Précision de localisation',p.precision_localisation],['Source du repère géographique',p.source_localisation],['Nombre de cas',p.nombre_cas],['Source principale',p.source_pri],['Type de source',p.source_typ],['Date de publication',p.date_publi]];popupCard('popup-case','●','Cas de suicide documenté',p.localite||p.REGION||'',rows,sourceLink(p));overlayPopup.setPosition(f.getGeometry().getCoordinates());}
+function showCasePopup(f){const p=f.getProperties();const sexe=norm(p.sexe)==='M'?'Masculin':norm(p.sexe)==='F'?'Féminin':p.sexe;const rows=[['Identifiant du cas',p.id_eveneme],['Date de l’événement',p.date_evene],['Date du décès',p.date_deces],['Année',p.annee],['Localité',p.localite],['Région',p.REGION||p.regions],['District',p.district],['Type de milieu',p.type_milie],['Type de lieu',p.categorie_],['Sexe',sexe],['Âge',p.age],['Tranche d’âge',p.categori_1],['Statut professionnel',p.statut_pro],['Contexte / circonstances',p.contexte_p],['Méthode documentée',p.methode_ge],['Statut de confirmation',p.statut_con],['Niveau de preuve',p.niveau_pre],['Confirmation par',p.validation_par],['Confirmation reçue le',p.date_confirmation_recue],['Ajout à la carte',p.date_ajout],['Précision de localisation',p.precision_localisation],['Source du repère géographique',p.source_localisation],['Nombre de cas',p.nombre_cas],['Source principale',p.source_pri],['Type de source',p.source_typ],['Date de publication',p.date_publi]];popupCard('popup-case','●','Cas de suicide documenté',p.localite||p.REGION||'',rows,sourceLink(p));overlayPopup.setPosition(f.getGeometry().getCoordinates());}
 function showRegionPopup(f){const p=f.getProperties();const total=p['TYPE SOURC'];const rows=[['Région sanitaire',p.REG_2012],['Région administrative',p[' REGION']],['District',p[' DISTRICT']],['Nombre total de cas documentés',total],['Hommes',p.HOMME],['Femmes',p.FEMME],['Sexe non renseigné',p.SEXE_NON_RENSEIGNE],['Cas en milieu urbain',p.URBAIN],['Cas en milieu rural',p.RURAL],['Cas confirmés',p.CONFIRME],['Cas rapportés',p.RAPPORTE],['Cas présumés',p[' PRESUME']]];if(selectedTheme){rows.push([`Variable cartographiée : ${selectedTheme==='__cases__'?'Cas documentés':labelKey(selectedTheme)}`,themeValue(f,selectedTheme)]);}popupCard('popup-region','▰','Région sanitaire',p.REG_2012||'',rows);overlayPopup.setPosition(ol.extent.getCenter(f.getGeometry().getExtent()));}
 function showCarePopup(f){const p=f.getProperties();const rows=[['Nom du service',p.NOM],['Identifiant',p.ET_ID],['Personnel IDES / SFS',p.IDES_SFS],['Nombre de psychiatres',p.PSYCHIATRE]];popupCard('popup-care','✚','Service de soins publics',p.NOM||'',rows);overlayPopup.setPosition(f.getGeometry().getCoordinates());}
 function showReportPopup(f){const p=f.getProperties();const rows=[['Référence',p.id],['Date de la situation',p.date],['Région',p.region],['Commune',p.commune],['Quartier / localité',p.quartier],['Sexe',p.sexe],['Âge / tranche d’âge',p.age],['Type de milieu',p.milieu],['Statut du signalement',p.statut],['Informations utiles',p.situation]];popupCard('popup-report','!','Signalement utilisateur','Non validé — à vérifier',rows,'<div class="popup-warning">Ce signalement n’est pas encore intégré à la base officielle.</div>');overlayPopup.setPosition(f.getGeometry().getCoordinates());}

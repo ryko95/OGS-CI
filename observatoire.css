@@ -96,3 +96,14 @@
 @media(max-width:360px){
   .field-row.inline{grid-template-columns:minmax(0,1fr)}
 }
+
+/* Monthly timeline and validated additions */
+.new-cases-alert{width:100%;padding:12px;border:0;border-radius:10px;background:#b91c1c;color:#fff;font-family:inherit;font-size:13px;font-weight:700;line-height:1.4;cursor:pointer;text-align:left;min-height:44px}
+.new-cases-alert.is-empty{background:#f1f5f9;color:#475569}
+.new-cases-alert:focus-visible,.addition-open:focus-visible{outline:3px solid #0369a1;outline-offset:3px}
+.addition-item{padding:12px 0;border-bottom:1px solid #e2e8f0;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.addition-item strong,.addition-item small{display:block}.addition-open{margin-top:7px}
+.timeline-scroll{overflow-x:auto;max-width:100%;border:1px solid #e2e8f0;border-radius:10px;background:#fafcfe}
+.timeline-svg{display:block;width:100%;min-width:300px;height:auto}.timeline-grid{stroke:#e2e8f0;stroke-width:1}.timeline-line{fill:none;stroke:#0f766e;stroke-width:2.5}.timeline-area{fill:#ccfbf1;opacity:.65}
+.timeline-svg text{font:10px sans-serif;fill:#475569}.month-dot{fill:#0f766e;stroke:white;stroke-width:2}.month-hit{fill:transparent;cursor:pointer}.month-point:focus{outline:none}.month-point:hover .month-dot,.month-point:focus .month-dot,.month-point.selected .month-dot{fill:#b91c1c;stroke:#b91c1c;stroke-width:3}.timeline-selection{font-size:12px;line-height:1.5;margin:9px 0;color:#0f766e;font-weight:700}
+.timeline-panel [hidden],.additions-panel [hidden]{display:none!important}

@@ -29,3 +29,15 @@ Si les exécutions échouent, ouvrir l'onglet **Actions** et consulter le journa
 ## Intégration validée du 9 octobre 2026
 
 Le cas `CIV-S-2026-001`, survenu à Cocody le 2 septembre 2026 et publié par KOACI le 3 septembre (article 200147), a été ajouté à la demande de Dr SREU Eric, qui le confirme après ses enquêtes. La date du 9 octobre est celle de la réception de cette confirmation, pas nécessairement celle des enquêtes. Le sexe, l’âge et le niveau de preuve codifié A/B/C restent non renseignés. La position est un repère communal approximatif sourcé dans la fiche, pas le lieu exact de l’événement. La couche des points contient désormais 53 cas ; les totaux de D.A ABIDJAN passent à 27 cas, 27 urbains et 4 confirmés.
+
+## Courbe mensuelle et alerte des nouveaux cas
+
+La courbe regroupe les points selon `date_evene` (JJ/MM/AAAA ou AAAA-MM-JJ). Les dates absentes ou invalides ne sont jamais remplacées par une date de publication ; leur nombre est affiché séparément. Le sélecteur d’année limite la courbe. Un clic sur un mois applique un filtre supplémentaire aux points, aux résultats, aux indicateurs et à la heatmap ; « Retirer le filtre mensuel » retrouve la requête initiale. Lancer ou réinitialiser une requête retire ce filtre mensuel.
+
+Pour chaque ajout validé par le responsable, renseigner dans les propriétés du point :
+
+- `date_ajout` : date réelle de publication dans la couche, au format AAAA-MM-JJ ;
+- `validation_par` : nom du responsable ayant validé l’intégration ;
+- `date_evene` : date des faits, si connue, distincte de la date d’ajout.
+
+Le bouton rouge en tête du tableau de bord est calculé automatiquement à partir des cas déjà présents dans la couche, ayant un validateur et une date d’ajout de moins de 30 jours (jour UTC, identique à Abidjan). Il permet de consulter la liste puis d’ouvrir chaque cas sur la carte. La veille médiatique et les signalements locaux non validés ne déclenchent pas cette alerte. Sans ces métadonnées, une entrée ne sera pas présentée comme un nouvel ajout validé. Le cas CIV-S-2026-001 porte la date d’ajout du 2026-10-09.
