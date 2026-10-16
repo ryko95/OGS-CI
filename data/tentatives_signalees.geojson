@@ -1,0 +1,24 @@
+{
+  "type": "FeatureCollection",
+  "name": "tentatives_signalees",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "5ac23e0f4c77922fee35",
+        "date_faits": "2026-10-14",
+        "date_publication": "2026-10-15",
+        "localite": "Fresco",
+        "region": "Gbôklé",
+        "statut": "Tentative rapportée par la presse, à vérifier",
+        "precision_localisation": "Repère indicatif au centre de Fresco ; lieu exact non cartographié",
+        "source": "KOACI",
+        "url_source": "https://www.koaci.com/index.php/article/2026/10/15/cote-divoire/societe/cote-divoire-fresco-pour-son-telephone-arrache-un-eleve-tente-de-se-suicider_201664.html"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-5.58608, 5.10419]
+      }
+    }
+  ]
+}
