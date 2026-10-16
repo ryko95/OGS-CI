@@ -1,10 +1,18 @@
 {
   "debut_veille": "2026-09-01",
-  "derniere_veille": "2026-10-16T17:23:33+00:00",
+  "derniere_veille": "2026-10-16T22:05:10+00:00",
   "sources_interrogees": 3,
-  "nouvelles_references": 0,
+  "nouvelles_references": 1,
   "requêtes_en_echec": 1,
   "articles": [
+    {
+      "id": "c2ebb823706ce52daf5b",
+      "url": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxOSUlwa0x2UHZQRHlmTmdlZUtnREw0YmtxRzJJRGdBTFJ5ZXNja3YwS05ndFFGdjdNa3pzRzlaMi1DdFd1R2MtU1N6QlRUUlRxelJ3dFp5b1dORmM2R1cwUVo0M1dIMXlXN2NSeXJVWDEyNGI1SHZaNm9Gdy1vRW03b29QSFZFTWRQNkY4OV9TcEpOREQwc3h6cm4zVmRHMm81N0x6NERELWlLT3hzZkwyeE0ycEYzbkRnb3lKNDZNZ1BFX2hrdVZGbnlWR2otU2dzZnRRVXRPclFXVzFPSmh5UGRSUF9tNGZzSEFJUVI1b1BqQQ?oc=5",
+      "domaine": "news.google.com",
+      "date_publication": "2026-10-15",
+      "premiere_detection": "2026-10-16T22:05:10+00:00",
+      "statut": "Article à vérifier"
+    },
     {
       "id": "5ac23e0f4c77922fee35",
       "url": "https://news.google.com/rss/articles/CBMi5AFBVV95cUxPc3FaellLMU1UT3FWeXE5cDd2R0d3SGpQN2FSMEZJUm1pT2dhSkN1WGQ3Zi1aTHhqRjE1Y3AtdVpOS05EdWtUTFljLU1EbnhvYzZ4eDU5SXNrQ1FtbF9QWGR0V3F3MXZzVFVOLWh1ZklSMHpLMDlmZGFsYk5qWURYVXA5c3Rkc1RMbXZ3Y2xqSG5RdXlFOXZNU0FqbkMzc2IyT2h2czZSSF81ZHl5WC02Ry13N0VGd3N3NzJoNFdCU1RhM1p6dnhXX2FoU0N5Q2V4ZGp6S1dXOWFwdkRhVThuYlpZaTU?oc=5",
