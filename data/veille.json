@@ -1,10 +1,18 @@
 {
   "debut_veille": "2026-09-01",
-  "derniere_veille": "2026-10-18T16:31:44+00:00",
+  "derniere_veille": "2026-10-18T21:30:14+00:00",
   "sources_interrogees": 3,
-  "nouvelles_references": 0,
+  "nouvelles_references": 2,
   "requêtes_en_echec": 1,
   "articles": [
+    {
+      "id": "cc7b2fece346c74a0f6d",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxNaTZsUFJhRU9MeDdUS3FJb1FsWmlCWjBjcmM4eU5XRkw3ckFJVXNxQ3V2enlVb0NVcmk2NVhSZjFZd091a1gyWEcyQWJZREVhT2p5X2U2YjVUREhEZkRXQnVhdERJTlRfSVhoWEdSQmNtSHZoSWJsSk9tZUxWZ3Nxdkhja09VcGhhZjdHNVNrVkNPTEhMZ05lclJienllTEI1SmZiajNmeVpMTGpXUnJMTTRGS2RhTEk?oc=5",
+      "domaine": "news.google.com",
+      "date_publication": "2026-10-16",
+      "premiere_detection": "2026-10-18T21:30:14+00:00",
+      "statut": "Article à vérifier"
+    },
     {
       "id": "c2ebb823706ce52daf5b",
       "url": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxOSUlwa0x2UHZQRHlmTmdlZUtnREw0YmtxRzJJRGdBTFJ5ZXNja3YwS05ndFFGdjdNa3pzRzlaMi1DdFd1R2MtU1N6QlRUUlRxelJ3dFp5b1dORmM2R1cwUVo0M1dIMXlXN2NSeXJVWDEyNGI1SHZaNm9Gdy1vRW03b29QSFZFTWRQNkY4OV9TcEpOREQwc3h6cm4zVmRHMm81N0x6NERELWlLT3hzZkwyeE0ycEYzbkRnb3lKNDZNZ1BFX2hrdVZGbnlWR2otU2dzZnRRVXRPclFXVzFPSmh5UGRSUF9tNGZzSEFJUVI1b1BqQQ?oc=5",
@@ -35,6 +43,14 @@
       "domaine": "news.google.com",
       "date_publication": "2026-09-12",
       "premiere_detection": "2026-10-09T18:48:49+00:00",
+      "statut": "Article à vérifier"
+    },
+    {
+      "id": "f4369ef72e7a1af71bc0",
+      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxQYy02RXhFNUNGeHh0a05UOVMyaFFPQXU3aUJQQ3F6bVlNVG5IQW5iaEUtbGp5MGJieHduNmhxYlZrQlpPVGl1c0NuaUhIeTVXUWdITU5BUkdDR3BDY0pDN0NJQkdqVF9xRVBRNEJoRE85SEkwYW44VGY2RGpTRnFTSHZXeU5Td2tWU0pNQ0lxX202RUFPLWhsWFZYdkxCYkhWNXliZTJnWDVENmZqSFhGU00yeTZKbl9l?oc=5",
+      "domaine": "news.google.com",
+      "date_publication": "2026-09-11",
+      "premiere_detection": "2026-10-18T21:30:14+00:00",
       "statut": "Article à vérifier"
     },
     {
