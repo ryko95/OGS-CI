@@ -63,7 +63,49 @@ lyr_REGIONSANITAIRE_1.setStyle(thematicStyle);
 const caseBaseStyle=new ol.style.Style({image:new ol.style.Circle({radius:6,fill:new ol.style.Fill({color:'#b91c1c'}),stroke:new ol.style.Stroke({color:'#fff',width:2})})});
 const caseUnconfirmedStyle=new ol.style.Style({image:new ol.style.Circle({radius:5,fill:new ol.style.Fill({color:'#64748b'}),stroke:new ol.style.Stroke({color:'#fff',width:2})})});
 lyr_LIEUDESUICIDE_2.setStyle(f=>currentCases.indexOf(f)>=0?(isConfirmedCase(f)?caseBaseStyle:caseUnconfirmedStyle):null);
-function updateLegend(){const box=$('themeLegend');$('mapConfirmedLegend').hidden=selectedTheme!=='__confirmed__';if(selectedTheme==='__confirmed__'){renderConfirmedLegend();return;}if(!selectedTheme){box.innerHTML='';return;}const mode=themeMode==='auto'?detectMode(selectedTheme):themeMode;if(mode==='numeric'){const vals=currentRegions.map(f=>themeValue(f,selectedTheme)).filter(isNumericValue).map(num),n=Math.max(3,Math.min(7,Number($('themeClasses').value)||5)),br=quantBreaks(vals,n);box.innerHTML=`<div class="legend">${Array.from({length:n},(_,i)=>`<span class="sw" style="background:${hot[Math.round(i*(hot.length-1)/(n-1))]}"></span>`).join('')}</div><div class="legend-labels"><span>${br.length?br[0].toFixed(0):0}</span><span>${br.length?br[br.length-1].toFixed(0):0}</span></div>`;}else{const vals=uniqueVals(currentRegions,selectedTheme);box.innerHTML=vals.slice(0,10).map((v,i)=>`<div style="font-size:10px;margin:3px 0"><span style="display:inline-block;width:11px;height:11px;background:${cool[i%cool.length]};border-radius:2px;margin-right:5px"></span>${esc(v)}</div>`).join('')+(vals.length>10?`<div class="muted">+ ${vals.length-10} autres catégories</div>`:'');}}
+// Returns precisely the integer value intervals used by thematicStyle's
+// quantile breaks. Duplicate quantile thresholds may make some classes empty.
+function numericLegendRanges(){
+  const values=currentRegions.map(f=>themeValue(f,selectedTheme)).filter(isNumericValue).map(num);
+  if(!values.length)return[];
+  const n=Math.max(3,Math.min(7,Number($('themeClasses').value)||5));
+  const bounds=quantBreaks(values,n);
+  const integers=values.every(Number.isInteger);
+  const format=v=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:10}).format(v);
+  const ranges=[];
+  for(let i=0;i<n;i++){
+    const color=hot[Math.round(i*(hot.length-1)/(n-1))];
+    let label;
+    if(integers){
+      const min=i===0?Math.ceil(bounds[0]):Math.floor(bounds[i])+1;
+      const max=Math.floor(bounds[i+1]);
+      if(min>max)continue;
+      label=min===max?`${format(min)} cas`:`${format(min)} à ${format(max)} cas`;
+    }else{
+      if(i>0&&bounds[i]===bounds[i+1])continue;
+      label=i===0?`De ${format(bounds[0])} à ${format(bounds[1])}`:`> ${format(bounds[i])} à ${format(bounds[i+1])}`;
+    }
+    ranges.push({color,label});
+  }
+  return ranges;
+}
+function updateLegend(){
+  const box=$('themeLegend');
+  $('mapConfirmedLegend').hidden=selectedTheme!=='__confirmed__';
+  if(selectedTheme==='__confirmed__'){renderConfirmedLegend();return;}
+  if(!selectedTheme){box.innerHTML='<p class="muted">Aucune coloration thématique sélectionnée.</p>';return;}
+  const mode=themeMode==='auto'?detectMode(selectedTheme):themeMode;
+  if(mode==='numeric'){
+    const ranges=numericLegendRanges();
+    const heading=`<p class="legend-variable">${esc(labelKey(selectedTheme))} — bornes de chaque classe</p>`;
+    box.innerHTML=heading+(ranges.length
+      ?`<div class="legend-range-list" role="list">${ranges.map(r=>`<div class="legend-range-row" role="listitem"><span class="legend-range-swatch" style="background:${r.color}"></span><span>${esc(r.label)}</span></div>`).join('')}</div><p class="legend-range-note">Effectifs documentés, pas un taux de risque. Classes calculées à partir des régions visibles.</p>`
+      :'<p class="muted">Aucune valeur numérique disponible dans cette sélection.</p>');
+  }else{
+    const vals=uniqueVals(currentRegions,selectedTheme);
+    box.innerHTML=vals.slice(0,10).map((v,i)=>`<div class="legend-range-row"><span class="legend-range-swatch" style="background:${cool[i%cool.length]}"></span><span>${esc(v)}</span></div>`).join('')+(vals.length>10?`<div class="muted">+ ${vals.length-10} autres catégories</div>`:'');
+  }
+}
 function refreshTheme(){selectedTheme=$('themeField').value;themeMode=$('themeMode').value;const fixed=selectedTheme==='__confirmed__';$('themeMode').disabled=fixed;$('themeClasses').disabled=fixed;lyr_REGIONSANITAIRE_1.changed();updateLegend();}
 $('themeField').onchange=refreshTheme;$('themeMode').onchange=refreshTheme;$('themeClasses').onchange=refreshTheme;
 function test(f,k,op,want){if(!k)return true;const raw=f.get(k), a=String(raw??'').trim(), b=String(want??'').trim();if(op==='empty')return !a;if(op==='notempty')return !!a;if(op==='contains')return norm(a).includes(norm(b));if(op==='eq')return norm(a)===norm(b);if(op==='neq')return norm(a)!==norm(b);const na=num(a),nb=num(b);if(op==='gt')return na>nb;if(op==='gte')return na>=nb;if(op==='lt')return na<nb;if(op==='lte')return na<=nb;return true;}
@@ -72,7 +114,7 @@ $('runQuery').onclick=runQuery;$('resetQuery').onclick=()=>{['qRegionField','qCa
 function fitFeatures(fs){fs=fs.filter(f=>f.getGeometry());if(!fs.length)return;const e=ol.extent.createEmpty();fs.forEach(f=>ol.extent.extend(e,f.getGeometry().getExtent()));map.getView().fit(e,{padding:[40,40,40,40],maxZoom:12,duration:400});}
 $('zoomQuery').onclick=()=>fitFeatures(currentCases.length?currentCases:currentRegions);$('btnHome').onclick=()=>map.getView().animate({center:ol.proj.fromLonLat([-5.9,7.25]),zoom:window.matchMedia('(max-width:850px)').matches?6:7,duration:400});
 function countsBy(key,features=currentCases){const m=new Map();features.forEach(f=>{let v=f.get(key);if(v===null||v===undefined||String(v).trim()==='')v='Non précisé';const s=String(v).trim();m.set(s,(m.get(s)||0)+1)});return [...m.entries()].sort((a,b)=>b[1]-a[1]);}
-function updateKPIs(){const regs=new Set(currentCases.map(f=>regionKey(caseRegion(f))).filter(Boolean));$('kpiCases').textContent=currentCases.length;$('kpiRegions').textContent=regs.size;$('kpiMale').textContent=currentCases.filter(f=>norm(f.get('sexe'))==='M').length;$('kpiFemale').textContent=currentCases.filter(f=>norm(f.get('sexe'))==='F').length;}
+function updateKPIs(){const regs=new Set(currentCases.map(f=>regionKey(caseRegion(f))).filter(Boolean));$('kpiCases').textContent=currentCases.length;$('kpiRegions').textContent=regs.size;$('homeCases').textContent=currentCases.length.toLocaleString('fr-FR');$('homeRegions').textContent=regs.size.toLocaleString('fr-FR');$('kpiMale').textContent=currentCases.filter(f=>norm(f.get('sexe'))==='M').length;$('kpiFemale').textContent=currentCases.filter(f=>norm(f.get('sexe'))==='F').length;}
 function renderChart(){let data,title;if(activeTab==='region'){data=countsBy('REGION');title='Cas documentés par région';}else if(activeTab==='sex'){data=countsBy('sexe');title='Répartition par sexe';}else if(activeTab==='place'){data=countsBy('categorie_');title='Types de lieux';}else{data=countsBy('methode_ge');title='Méthodes documentées';}const max=Math.max(1,...data.map(d=>d[1]));$('chart').innerHTML=`<h3>${title}</h3><div class="chart">${data.slice(0,16).map(([k,v])=>`<div class="barrow" title="${esc(k)}: ${v}"><div class="barlabel">${esc(k)}</div><div class="bartrack"><div class="bar ${activeTab==='place'?'cool':''}" style="width:${100*v/max}%"></div></div><b>${v}</b></div>`).join('')}</div>`;}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeTab=b.dataset.tab;renderChart();});
 function renderResults(){$('resultBody').innerHTML=currentCases.slice(0,150).map(f=>`<tr data-id="${esc(f.get('id_eveneme'))}"><td>${esc(f.get('localite')||'—')}</td><td>${esc(f.get('REGION')||'—')}</td><td>${esc(f.get('sexe')||'—')}</td><td>${esc(f.get('date_evene')||f.get('annee')||'—')}</td></tr>`).join('');document.querySelectorAll('#resultBody tr').forEach(tr=>tr.onclick=()=>{const f=caseFeatures.find(x=>String(x.get('id_eveneme'))===tr.dataset.id);if(f){fitFeatures([f]);showCasePopup(f);}});}
