@@ -46,19 +46,32 @@
 <section class="panel" aria-labelledby="veilleTitle"><h2 id="veilleTitle">📰 Veille médiatique</h2><p id="veilleEtat" class="muted" role="status">Chargement de la veille…</p><details id="veilleDetails"><summary style="cursor:pointer;font-weight:600;padding:8px 0">Afficher / replier les liens de la veille</summary><div id="veilleLiens" class="veille-list"></div><p class="muted">Références détectées automatiquement. Un lien peut concerner un cas déjà connu, plusieurs cas ou aucun cas en Côte d’Ivoire. Une tentative rapportée est présentée séparément des statistiques de décès après lecture de sa source.</p></details></section>
 <section class="panel" aria-labelledby="mapLegendTitle">
 <h2 id="mapLegendTitle">🗺️ Légende de la carte</h2>
-<ul style="list-style:none;padding:0;margin:0;display:grid;gap:12px;font-size:13px">
-<li style="display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="width:12px;height:12px;flex-shrink:0;border-radius:50%;background:#b91c1c;border:2px solid white;box-shadow:0 0 0 1px #cbd5e1"></span><span><b>Point rouge : cas confirmé</b><br>Décès explicitement confirmé dans la base.</span></li>
-<li style="display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="width:12px;height:12px;flex-shrink:0;border-radius:50%;background:#64748b;border:2px solid white;box-shadow:0 0 0 1px #cbd5e1"></span><span><b>Point gris : événement non confirmé</b><br>Décès rapporté, présumé ou tentative à vérifier.</span></li>
-<li style="display:flex;align-items:center;gap:10px"><img src="styles/noun_Hospital_8441157.svg" alt="" width="20" height="26"><span><b>Service de soins publics</b><br>Établissement de prise en charge.</span></li>
-<li style="display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="width:14px;height:14px;flex-shrink:0;border-radius:50%;background:#7c3aed;border:2px solid white;box-shadow:0 0 0 1px #cbd5e1"></span><span><b>Signalement citoyen</b><br>Information non validée, distincte des événements intégrés.</span></li>
-<li style="display:flex;align-items:center;gap:10px"><span aria-hidden="true" style="width:22px;height:16px;flex-shrink:0;border:1px solid #232323;background:#e2e8f0"></span><span><b>Région sanitaire</b><br>Par défaut : nombre de cas présumés dans la couche régionale.</span></li>
-</ul>
-<h3 style="margin-top:16px">Couleurs de la variable sélectionnée</h3>
-<div id="themeLegend"></div>
-<p class="muted">La carte utilise par défaut la variable existante « Cas présumés » de la couche régionale, avec des teintes du jaune (faibles effectifs) au rouge (forts effectifs). Ces valeurs sont des cas présumés documentés dans la base, et ne représentent pas le risque réel de suicide.</p>
-<div aria-hidden="true" style="height:12px;border-radius:6px;background:linear-gradient(to right,#00f,#0ff,#0f0,#ff0,#f00)"></div>
-<p class="muted"><b>Densité spatiale (si activée) :</b> du bleu au rouge, concentration croissante des points. Il ne s’agit pas d’un taux de risque.</p>
-<p class="muted">Les repères approximatifs sont précisés dans les fiches. Les dossiers sans coordonnées n’apparaissent pas sur la carte.</p>
+<div class="map-legend-section map-legend-primary">
+  <h3 class="map-legend-heading">1. Variable sélectionnée — plages de couleurs</h3>
+  <div id="themeLegend" aria-live="polite"></div>
+  <p class="muted">La variable choisie à gauche détermine les couleurs et les classes des régions sanitaires. Les effectifs documentés ne représentent pas un taux de risque de suicide.</p>
+</div>
+<div class="map-legend-section">
+  <h3 class="map-legend-heading">2. Lieux de suicide (points)</h3>
+  <ul class="map-legend-items">
+    <li><span aria-hidden="true" class="map-legend-dot" style="background:#b91c1c"></span><span><b>Point rouge : cas confirmé</b><small>Décès explicitement confirmé dans la base.</small></span></li>
+    <li><span aria-hidden="true" class="map-legend-dot" style="background:#64748b"></span><span><b>Point gris : événement non confirmé</b><small>Décès rapporté ou présumé, ou tentative à vérifier.</small></span></li>
+  </ul>
+</div>
+<div class="map-legend-section">
+  <h3 class="map-legend-heading">3. Autres repères cartographiques</h3>
+  <ul class="map-legend-items">
+    <li><img src="styles/noun_Hospital_8441157.svg" alt="" width="20" height="26"><span><b>Service de soins publics</b><small>Établissement de prise en charge.</small></span></li>
+    <li><span aria-hidden="true" class="map-legend-dot" style="background:#7c3aed"></span><span><b>Signalement citoyen</b><small>Information non validée, distincte des événements intégrés.</small></span></li>
+    <li><span aria-hidden="true" class="map-legend-polygon"></span><span><b>Région sanitaire</b><small>Polygone coloré selon la variable sélectionnée.</small></span></li>
+  </ul>
+</div>
+<div class="map-legend-section">
+  <h3 class="map-legend-heading">4. Densité spatiale (si activée)</h3>
+  <div aria-hidden="true" style="height:12px;border-radius:6px;background:linear-gradient(to right,#00f,#0ff,#0f0,#ff0,#f00)"></div>
+  <p class="muted">Du bleu au rouge : concentration croissante des points affichés, sans interprétation directe en taux de risque.</p>
+  <p class="muted">Les repères approximatifs sont précisés dans les fiches. Les dossiers sans coordonnées ne figurent pas sous forme de points.</p>
+</div>
 </section>
 <section class="panel timeline-panel" aria-labelledby="timelineTitle">
 <h2 id="timelineTitle">Évolution mensuelle des cas</h2>
