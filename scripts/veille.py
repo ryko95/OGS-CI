@@ -13,6 +13,8 @@ from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
+from scripts.social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform
+
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "veille.json"
 CONFIG = ROOT / "data" / "veille_config.json"
@@ -101,7 +103,7 @@ def fetch_news(query):
             for item in root.findall('./channel/item')]
 
 
-def collect(fetcher=fetch, now=None):
+def collect(fetcher=fetch, now=None, social_fetcher=None):
     now = now or datetime.now(timezone.utc)
     config = json.loads(CONFIG.read_text(encoding="utf-8"))
     if not config.get("enabled", False):
@@ -114,6 +116,8 @@ def collect(fetcher=fetch, now=None):
     mapped = previous_urls()
     seen = {a["url"] for a in entries.values()} | mapped
     errors, successes, detected = [], 0, 0
+    social_successes, social_errors = 0, 0
+    social_queries = SOCIAL_QUERIES if config.get('social_enabled', False) else ()
     for source, query in ([('GDELT', q) for q in QUERIES] + [('Google Actualités', q) for q in NEWS_QUERIES]):
         try:
             articles = fetcher(query) if source == 'GDELT' else fetch_news(query)
@@ -134,7 +138,40 @@ def collect(fetcher=fetch, now=None):
             id_ = hashlib.sha256(url.encode()).hexdigest()[:20]
             entries[id_] = {"id": id_, "url": url, "domaine": hostname,
                             "date_publication": article_date, "premiere_detection": now.isoformat(timespec="seconds"),
-                            "statut": "Article à vérifier"}
+                            "statut": "Article à vérifier", "categorie_source": "Presse"}
+            seen.add(url)
+            detected += 1
+    # Résultats publics indexés, sans lecture des fils Facebook ni accès privé.
+    for platform, query in social_queries:
+        try:
+            articles = (social_fetcher or fetch_social_public)(query)
+            social_successes += 1
+            successes += 1
+        except Exception as exc:
+            social_errors += 1
+            errors.append(f"Réseau {platform}: {str(exc)[:150]}")
+            continue
+        for article in articles:
+            url = canonical_url(article.get("url", ""))
+            if not url or url in seen or social_platform(url) != platform:
+                continue
+            title = str(article.get("title") or "").casefold()
+            if "suicid" not in title:
+                continue
+            # Date de REPÉRAGE : la date de publication sociale n'est pas disponible.
+            detected_date = now.date().isoformat()
+            if detected_date < threshold:
+                continue
+            host = urllib.parse.urlsplit(url).hostname
+            id_ = hashlib.sha256(url.encode()).hexdigest()[:20]
+            entries[id_] = {
+                "id": id_, "url": url, "domaine": host,
+                "date_publication": detected_date,
+                "type_date": "reperage", "plateforme": platform,
+                "categorie_source": "Réseau social",
+                "premiere_detection": now.isoformat(timespec="seconds"),
+                "statut": "Publication publique indexée à vérifier"
+            }
             seen.add(url)
             detected += 1
     if not successes:
@@ -143,9 +180,12 @@ def collect(fetcher=fetch, now=None):
               "derniere_veille": now.isoformat(timespec="seconds"),
               "sources_interrogees": successes, "nouvelles_references": detected,
               "requêtes_en_echec": len(errors),
+              "reseaux_requetes_reussies": social_successes,
+              "reseaux_requetes_en_echec": social_errors,
+              "reseaux_requetes_prevues": len(social_queries),
               "articles": sorted(entries.values(), key=lambda a: (a["date_publication"], a["id"]), reverse=True)[:300]}
     OUTPUT.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"{successes}/{len(QUERIES) + len(NEWS_QUERIES)} requêtes réussies, {detected} nouveaux liens, {len(result['articles'])} liens conservés")
+    print(f"{successes}/{len(QUERIES) + len(NEWS_QUERIES) + len(social_queries)} requêtes réussies, {detected} nouveaux liens, {len(result['articles'])} liens conservés")
     if errors:
         print("Erreurs partielles : " + "; ".join(errors), file=sys.stderr)
     return result
