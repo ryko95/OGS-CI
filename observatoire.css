@@ -153,3 +153,19 @@
   .map-badge{order:2}.author-badge{order:3}
 }
 @media(max-width:430px){.home-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.home-metric-update{grid-column:1/-1}.home-metric-update .home-metric-date{font-size:15px}}
+
+/* Lisibilité et hiérarchie de la légende : variable, points, autres couches. */
+.map-legend-section{padding:11px 0;border-bottom:1px solid #e2e8f0}
+.map-legend-section:last-child{border-bottom:0;padding-bottom:0}
+.map-legend-primary{padding-top:3px}
+.map-legend-heading{margin:4px 0 10px!important;font-size:11px!important;line-height:1.4;color:#334155;text-transform:uppercase;letter-spacing:.03em}
+.map-legend-items{display:grid;list-style:none;gap:11px;margin:0;padding:0}
+.map-legend-items li{display:flex;align-items:flex-start;gap:10px;min-width:0;font-size:12px;line-height:1.45}
+.map-legend-items li>span:last-child{min-width:0}
+.map-legend-items b{display:block;font-weight:750}
+.map-legend-items small{display:block;color:#64748b;font-size:11px;line-height:1.45;margin-top:1px}
+.map-legend-dot{display:inline-block;flex:0 0 14px;width:14px;height:14px;border:2px solid #fff;box-shadow:0 0 0 1px #cbd5e1;border-radius:50%;margin-top:2px}
+.map-legend-polygon{display:inline-block;flex:0 0 22px;width:22px;height:16px;border:1px solid #334155;background:#e2e8f0;margin-top:1px}
+.map-legend-section #themeLegend{margin-top:2px;margin-bottom:7px}
+.map-legend-section .legend-variable{margin-top:5px}
+@media(max-width:850px){.map-legend-items li{font-size:13px}.map-legend-items small{font-size:12px}}
