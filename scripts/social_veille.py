@@ -32,7 +32,8 @@ import unicodedata
 
 def normalize_text(value):
     value = unicodedata.normalize("NFKD", str(value or ""))
-    return "".join(char for char in value if not unicodedata.combining(char)).lower()
+    ascii_text = "".join(char for char in value if not unicodedata.combining(char)).lower()
+    return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", ascii_text)).strip()
 
 # Des localités sont utilisées pour trier les liens ; une mention du pays,
 # d'une ville ou d'une région ne prouve jamais que les faits s'y sont déroulés.
@@ -40,11 +41,11 @@ IVORIAN_TERMS = (
     "cote d ivoire", "ivoirien", "ivoirienne", "abidjan", "bouake", "yamoussoukro",
     "korhogo", "daloa", "san pedro", "sassandra", "gagnoa", "agboville", "man",
     "bondoukou", "abengourou", "adzope", "divo", "ferkessedougou", "odienne",
-    "soubré", "soubre", "bouna", "bouafle", "dabou", "bingerville",
-    "yopougon", "cocody", "adjame", "attécoubé", "attecoube", "koumassi",
+    "soubre", "bouna", "bouafle", "dabou", "bingerville",
+    "yopougon", "cocody", "adjame", "attecoube", "koumassi",
     "treichville", "marcory", "port bouet", "plateau", "alepe", "niakara",
     "zuenoula", "guiglo", "duekoue", "tengrela", "bongouanou", "issia",
-    "agboville", "sinématiali", "sinematiali", "fresco", "adiake",
+    "agboville", "sinematiali", "fresco", "adiake",
 )
 # Exclut explicitement les titres exclusivement documentaires/préventifs.
 NON_EVENT_TERMS = (
@@ -65,7 +66,7 @@ def social_candidate(title, description=""):
         return None
     # Mot isolé « man » ou « divo » risquerait des faux positifs dans d'autres pays.
     location_terms = tuple(k for k in IVORIAN_TERMS if k not in ("man", "divo", "plateau"))
-    if not any(re.search(r"(?<!\\w)" + re.escape(k) + r"(?!\\w)", t) for k in location_terms):
+    if not any(re.search(r"(?<!\w)" + re.escape(k) + r"(?!\w)", t) for k in location_terms):
         return None
     kind = "Tentative ou crise à vérifier" if any(k in t for k in ATTEMPT_TERMS) else "Suicide signalé à vérifier"
     return {"type_documentaire": kind,
