@@ -17,9 +17,27 @@
 <aside class="side left">
 <section class="panel"><h2>🗺️ Cartographie thématique</h2><div class="field-row"><label>Variable de la couche Région sanitaire</label><select id="themeField"></select></div><div class="field-row inline"><div><label>Mode</label><select id="themeMode"><option value="auto">Automatique</option><option value="numeric">Valeurs chiffrées — tons chauds</option><option value="nominal">Valeurs nominales — tons froids</option></select></div><div><label>Classes</label><select id="themeClasses"><option>5</option><option>4</option><option>6</option><option>7</option></select></div></div><p class="muted">Par défaut : « Cas présumés », variable déjà renseignée dans la couche des régions sanitaires. Les plages jaune → rouge représentent un nombre croissant de cas présumés. Vous pouvez changer la variable et le nombre de classes.</p></section>
 <section class="panel"><h2>🔎 Requêtes multicritères liées</h2><div class="query-block"><h3>Régions sanitaires</h3><div class="field-row"><select id="qRegionField"></select></div><div class="field-row inline"><select id="qRegionOp"></select><input id="qRegionValue" list="qRegionValues" placeholder="Valeur..."><datalist id="qRegionValues"></datalist></div></div><div class="query-block"><h3>Lieux de suicide</h3><div class="field-row"><select id="qCaseField"></select></div><div class="field-row inline"><select id="qCaseOp"></select><input id="qCaseValue" list="qCaseValues" placeholder="Valeur..."><datalist id="qCaseValues"></datalist></div></div><label class="switchline"><input type="checkbox" id="linkQueries" checked> Lier les résultats par région pour affiner la sélection</label><div class="button-row"><button class="btn primary small" id="runQuery">Exécuter</button><button class="btn ghost small" id="resetQuery">Réinitialiser</button><button class="btn ghost small" id="zoomQuery">Zoom résultats</button></div><div class="footer-note" id="queryInfo">Aucun filtre actif.</div></section>
-<section class="panel"><h2>📋 Résultats</h2><div class="results"><table class="result-table"><thead><tr><th>Lieu</th><th>Région</th><th>Sexe</th><th>Date</th></tr></thead><tbody id="resultBody"></tbody></table></div></section>
+<details class="panel secondary-details"><summary>📋 Résultats de la sélection</summary><div class="results"><table class="result-table"><thead><tr><th>Lieu</th><th>Région</th><th>Sexe</th><th>Date</th></tr></thead><tbody id="resultBody"></tbody></table></div></details>
 </aside>
-<section class="map-wrap"><div id="map"><div id="popup" class="ol-popup"><a href="#" id="popup-closer" class="ol-popup-closer"></a><div id="popup-content"></div></div></div><div id="mapConfirmedLegend" class="map-confirmed-legend" aria-label="Légende des plages de couleurs"></div><div class="map-badge"><b>Lecture prudente :</b> cette carte décrit les cas documentés dans la base, pas l’incidence réelle de l’ensemble des suicides. Les statistiques générales incluent décès documentés et tentatives rapportées, distingués dans le bilan et les fiches.</div><div class="author-badge"><b>Conception et réalisation :</b> Dr SREU Eric<br><span>Enseignant-Chercheur, Département de Géographie, Université Alassane Ouattara</span><br><span class="author-contact"><a href="tel:+2250747460104">+225 07 47 46 01 04</a> · <a href="mailto:sreueric@gmail.com">sreueric@gmail.com</a></span></div></section>
+<section class="map-wrap">
+<div class="home-metrics" role="group" aria-label="Chiffres clés de l'observatoire">
+  <div class="home-metric" title="Tous les dossiers de la sélection, y compris les archives non géolocalisées.">
+    <span class="home-metric-label">Dossiers documentés</span>
+    <strong id="homeCases" class="home-metric-number" aria-live="polite">—</strong>
+    <small>Dans la sélection</small>
+  </div>
+  <div class="home-metric" title="Régions renseignées dans les dossiers de la sélection.">
+    <span class="home-metric-label">Régions concernées</span>
+    <strong id="homeRegions" class="home-metric-number" aria-live="polite">—</strong>
+    <small>Régions identifiées</small>
+  </div>
+  <div class="home-metric home-metric-update">
+    <span class="home-metric-label">Dernière mise à jour</span>
+    <strong id="homeLastUpdate" class="home-metric-date" aria-live="polite">—</strong>
+    <small id="homeLastUpdateDetail">Veille médiatique · non assimilée à une validation</small>
+  </div>
+</div>
+<div id="map"><div id="popup" class="ol-popup"><a href="#" id="popup-closer" class="ol-popup-closer"></a><div id="popup-content"></div></div></div><div id="mapConfirmedLegend" class="map-confirmed-legend" aria-label="Légende des plages de couleurs"></div><div class="map-badge"><b>Lecture prudente :</b> cette carte décrit les cas documentés dans la base, pas l’incidence réelle de l’ensemble des suicides. Les statistiques générales incluent décès documentés et tentatives rapportées, distingués dans le bilan et les fiches.</div><div class="author-badge"><b>Conception et réalisation :</b> Dr SREU Eric<br><span>Enseignant-Chercheur, Département de Géographie, Université Alassane Ouattara</span><br><span class="author-contact"><a href="tel:+2250747460104">+225 07 47 46 01 04</a> · <a href="mailto:sreueric@gmail.com">sreueric@gmail.com</a></span></div></section>
 <aside class="side right">
 <section class="panel additions-panel" aria-label="Nouveaux cas validés">
 <button id="newCasesAlert" class="new-cases-alert" type="button" aria-expanded="false" aria-controls="newCasesList">Nouveaux cas</button>
