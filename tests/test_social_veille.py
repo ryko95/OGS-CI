@@ -24,6 +24,24 @@ class TestSocialVeille(unittest.TestCase):
                   "https://malicious-facebook.com/u/posts/123", "https://example.org/post"):
             self.assertEqual("", social_veille.social_platform(u))
 
+    def test_public_facebook_candidates_are_territorial_and_specific(self):
+        accepted = social_veille.social_candidate("Tentative de suicide à Bouaké")
+        self.assertIsNotNone(accepted)
+        self.assertEqual("Tentative ou crise à vérifier", accepted["type_documentaire"])
+        self.assertIn("à confirmer", accepted["statut_territorial"])
+
+        self.assertEqual("Suicide signalé à vérifier",
+                         social_veille.social_candidate("Suicide signalé à Daloa")["type_documentaire"])
+        self.assertIsNone(social_veille.social_candidate(
+            "Suicide signalé à Paris"))
+        self.assertIsNone(social_veille.social_candidate(
+            "Journée mondiale de prévention du suicide à Abidjan"))
+        self.assertIsNone(social_veille.social_candidate(
+            "Une publication parle d'une fête à Bouaké"))
+        self.assertIsNotNone(social_veille.social_candidate(
+            "Un cas de suicide dans la Côte d’Ivoire"))
+        self.assertGreaterEqual(sum(platform == "Facebook" for platform, _ in social_veille.SOCIAL_QUERIES), 8)
+
     def test_social_rss_without_social_network_scraping(self):
         xml = b'<rss version="2.0"><channel><item><title>Suicide pres de Bouake</title><link>https://facebook.com/page/posts/123</link></item></channel></rss>'
         class Reply:
@@ -65,7 +83,9 @@ class TestSocialVeille(unittest.TestCase):
             self.assertEqual("Réseau social", entry["categorie_source"])
             self.assertEqual("Facebook", entry["plateforme"])
             self.assertEqual("reperage", entry["type_date"])
-            self.assertEqual("Publication publique indexée à vérifier", entry["statut"])
+            self.assertEqual("Publication publique indexée à vérifier, non validée", entry["statut"])
+            self.assertEqual("Suicide signalé à vérifier", entry["type_documentaire"])
+            self.assertIn("Côte d\'Ivoire", entry["statut_territorial"])
             self.assertEqual(layer, (root / "layers/LIEUDESUICIDE_2.js").read_text(encoding="utf-8"))
 
 
