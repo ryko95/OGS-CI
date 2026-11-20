@@ -44,7 +44,7 @@ def send_alert(smtp_factory=smtplib.SMTP_SSL):
     message = EmailMessage()
     message["From"] = username
     message["To"] = recipient
-    message["Subject"] = f"OGS-CI : {len(unseen)} nouveau(x) lien(s) de presse à vérifier"
+    message["Subject"] = f"OGS-CI : {len(unseen)} nouveau(x) lien(s) de veille à vérifier"
     lines = [
         "Veille de l'Observatoire géographique du suicide en Côte d'Ivoire",
         "",
@@ -54,7 +54,9 @@ def send_alert(smtp_factory=smtplib.SMTP_SSL):
         "",
     ]
     for number, entry in enumerate(unseen, 1):
-        lines += [f"{number}. {entry.get('domaine', 'Source inconnue')} — {entry.get('date_publication', 'date inconnue')}",
+        media = entry.get('plateforme') or entry.get('domaine', 'Source inconnue')
+        date_type = 'repérée le' if entry.get('type_date') == 'reperage' else 'date du flux'
+        lines += [f"{number}. {media} — {date_type} {entry.get('date_publication', 'date inconnue')}",
                   entry["url"], ""]
     lines += ["Observatoire : " + SITE_URL, "Aucune identité ni détail personnel n'est inclus dans ce message."]
     message.set_content("\n".join(lines))
