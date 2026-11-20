@@ -14,9 +14,9 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 try:
-    from scripts.social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform
+    from scripts.social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform, social_candidate
 except ModuleNotFoundError:
-    from social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform
+    from social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform, social_candidate
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "veille.json"
@@ -144,7 +144,8 @@ def collect(fetcher=fetch, now=None, social_fetcher=None):
                             "statut": "Article à vérifier", "categorie_source": "Presse"}
             seen.add(url)
             detected += 1
-    # Résultats publics indexés, sans lecture des fils Facebook ni accès privé.
+    # Veille sociale ciblée : tentatives et décès allégués sur le territoire ivoirien.
+    # Le moteur retourne seulement quelques publications indexées, sans preuve du lieu des faits.
     for platform, query in social_queries:
         try:
             articles = (social_fetcher or fetch_social_public)(query)
@@ -158,10 +159,11 @@ def collect(fetcher=fetch, now=None, social_fetcher=None):
             url = canonical_url(article.get("url", ""))
             if not url or url in seen or social_platform(url) != platform:
                 continue
-            title = str(article.get("title") or "").casefold()
-            if "suicid" not in title:
+            candidate = social_candidate(
+                str(article.get("title") or ""), str(article.get("description") or ""))
+            if not candidate:
                 continue
-            # Date de REPÉRAGE : la date de publication sociale n'est pas disponible.
+            # Seule la date de repérage par le moteur est disponible.
             detected_date = now.date().isoformat()
             if detected_date < threshold:
                 continue
@@ -172,8 +174,10 @@ def collect(fetcher=fetch, now=None, social_fetcher=None):
                 "date_publication": detected_date,
                 "type_date": "reperage", "plateforme": platform,
                 "categorie_source": "Réseau social",
+                "type_documentaire": candidate["type_documentaire"],
+                "statut_territorial": candidate["statut_territorial"],
                 "premiere_detection": now.isoformat(timespec="seconds"),
-                "statut": "Publication publique indexée à vérifier"
+                "statut": "Publication publique indexée à vérifier, non validée"
             }
             seen.add(url)
             detected += 1
