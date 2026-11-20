@@ -170,16 +170,33 @@ function renderTimeline(){
   $('timelineNote').textContent=`${data.length?monthLabel(data[0].key)+' – '+monthLabel(data[data.length-1].key)+'. ':''}${data.reduce((n,d)=>n+d.count,0)} cas sur la courbe. ${series.undated} cas sans date des faits exploitable exclus de la courbe (sur ${queryCases.length} résultats de la requête).${series.future?' '+series.future+' date(s) future(s) exclue(s).':''}`;
 }
 function renderNewCases(){
-  const records=caseFeatures.map(f=>f.getProperties());const additions=OGSTime.monthlyAdditions(records).concat(records.filter(p=>p.type_evenement==='Tentative de suicide'&&p.date_ajout&&p.date_ajout.slice(0,7)===new Date().toISOString().slice(0,7)));
-  const button=$('newCasesAlert'),period=monthFormatter.format(new Date());
-  $('newCasesList').hidden=true;button.setAttribute('aria-expanded','false');
-  button.textContent=additions.length?`● ${additions.length} nouvel${additions.length>1?'s':''} événement${additions.length>1?'s':''} intégré${additions.length>1?'s':''} en ${period} — Voir`:`Aucun nouvel événement intégré en ${period}`;
-  button.classList.toggle('is-empty',!additions.length);button.disabled=!additions.length;
-  $('newCasesList').innerHTML=`<p class="muted">Événements intégrés en ${esc(period)}. La date d’ajout est distincte de la date des faits.</p>`+additions.map(p=>`<div class="addition-item"><strong>${esc(p.localite)}</strong><small>Faits : ${esc(p.date_evene||'date non précisée')} · Ajout : ${esc(p.date_ajout)}</small><small>Statut : ${esc(p.statut_con||p.validation_par)}</small><button class="btn ghost small addition-open" data-event="${esc(p.id_eveneme)}" type="button">Voir sur la carte</button></div>`).join('');
-  $('newCasesList').querySelectorAll('[data-event]').forEach(button=>button.onclick=()=>focusNewCase(button.dataset.event));
+  const now=new Date();
+  const month=now.toISOString().slice(0,7);
+  const period=monthFormatter.format(now);
+  // Ce panneau annonce UNIQUEMENT les événements du mois en cours, saisis et
+  // validés ce même mois. Une archive rétrospective importée en novembre ne
+  // doit jamais être annoncée comme un nouveau cas détecté en novembre.
+  const records=caseFeatures.map(f=>f.getProperties());
+  const additions=OGSTime.monthlyAdditions(records,now)
+    .filter(p=>OGSTime.monthKey(p.date_evene)===month
+      &&p.origine_integration!=='audit_social_2015_2026');
+  const button=$('newCasesAlert');
+  $('newCasesList').hidden=true;
+  button.setAttribute('aria-expanded','false');
+  button.textContent=additions.length
+    ?`● ${additions.length} nouveau${additions.length>1?'x':''} cas détecté${additions.length>1?'s':''} en ${period} — Voir`
+    :`Aucun nouveau cas détecté en ${period}`;
+  button.classList.toggle('is-empty',!additions.length);
+  button.disabled=!additions.length;
+  $('newCasesList').innerHTML=
+    `<p class="muted">Événements du mois en cours uniquement, intégrés après validation pendant ce même mois. Les archives historiques ajoutées récemment restent consultables dans la base générale, sans figurer dans cette alerte.</p>`
+    +additions.map(p=>`<div class="addition-item"><strong>${esc(p.localite)}</strong><small>Faits : ${esc(p.date_evene)} · Validation : ${esc(p.date_ajout)}</small><small>Statut : ${esc(p.statut_con||p.validation_par)}</small><button class="btn ghost small addition-open" data-event="${esc(p.id_eveneme)}" type="button">Voir sur la carte</button></div>`).join('');
+  $('newCasesList').querySelectorAll('[data-event]').forEach(b=>b.onclick=()=>focusNewCase(b.dataset.event));
   button.onclick=()=>{
     if(additions.length===1){focusNewCase(additions[0].id_eveneme);return;}
-    const open=$('newCasesList').hidden;$('newCasesList').hidden=!open;button.setAttribute('aria-expanded',String(open));
+    const open=$('newCasesList').hidden;
+    $('newCasesList').hidden=!open;
+    button.setAttribute('aria-expanded',String(open));
   };
 }
 function focusNewCase(id){
@@ -214,7 +231,7 @@ function showSocialPopup(f){
  ['Précision du repère',p.precision_localisation]
  ];
  popupCard('popup-social','●','Événement documenté — hors décès',p.localite,rows,
- '<div class="popup-warning">Fait déclaré vérifié par le responsable. La nature (tentative, crise ou situation contestée) reste distincte d’un décès confirmé. La localisation est indicative.</div>'+sourceLink(p));
+ '<div class="popup-warning">Fait déclaré vérifié par le responsable. La nature (tentative, crise ou situation contestée) reste distincte d’un décès confirmé. La précision de localisation est indiquée dans la fiche.</div>'+sourceLink(p));
  overlayPopup.setPosition(f.getGeometry().getCoordinates());
 }
 function showRegionPopup(f){const p=f.getProperties();const total=p['TYPE SOURC'];const rows=[['Région sanitaire',p.REG_2012],['Région administrative',p[' REGION']],['District',p[' DISTRICT']],['Nombre total de cas documentés',total],['Hommes',p.HOMME],['Femmes',p.FEMME],['Sexe non renseigné',p.SEXE_NON_RENSEIGNE],['Cas en milieu urbain',p.URBAIN],['Cas en milieu rural',p.RURAL],['Cas confirmés (sélection en cours)',confirmedRegionCount(f)],['Cas rapportés',p.RAPPORTE],['Cas présumés',p[' PRESUME']]];if(selectedTheme){rows.push([`Variable cartographiée : ${selectedTheme==='__cases__'?'Cas documentés':labelKey(selectedTheme)}`,themeValue(f,selectedTheme)]);}popupCard('popup-region','▰','Région sanitaire',p.REG_2012||'',rows);overlayPopup.setPosition(ol.extent.getCenter(f.getGeometry().getExtent()));}
