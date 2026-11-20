@@ -49,7 +49,9 @@
         anchor.rel = 'noopener noreferrer';
         anchor.textContent = item.plateforme ? item.plateforme + ' · publication indexée' : (item.domaine || url.hostname);
         const detail = document.createElement('small');
-        detail.textContent = item.type_date === 'reperage' ? ' · repérée le ' + (item.date_publication || 'date inconnue') + ' · date des faits non vérifiée' : ' · ' + (item.date_publication || 'date inconnue') + ' · à vérifier';
+        detail.textContent = item.type_date === 'reperage'
+          ? ' · ' + (item.type_documentaire || 'publication à vérifier') + ' · repérée le ' + (item.date_publication || 'date inconnue') + ' · lieu des faits et date à confirmer'
+          : ' · ' + (item.date_publication || 'date inconnue') + ' · à vérifier';
         row.append(anchor, detail);
         list.appendChild(row);
       } catch (_) { /* lien malformé : ignorer */ }
