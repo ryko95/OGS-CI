@@ -1,4 +1,5 @@
 {
   "enabled": true,
-  "start_date": "2026-09-01"
+  "start_date": "2026-09-01",
+  "social_enabled": true
 }
