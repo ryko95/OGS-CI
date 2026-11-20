@@ -43,7 +43,7 @@
 <button id="newCasesAlert" class="new-cases-alert" type="button" aria-expanded="false" aria-controls="newCasesList">Nouveaux cas</button>
 <div id="newCasesList" hidden></div>
 </section>
-<section class="panel" aria-labelledby="veilleTitle"><h2 id="veilleTitle">📰 Veille presse et réseaux sociaux</h2><p id="veilleEtat" class="muted" role="status">Chargement de la veille…</p><details id="veilleDetails"><summary style="cursor:pointer;font-weight:600;padding:8px 0">Afficher / replier les liens de la veille</summary><div id="veilleLiens" class="veille-list"></div><p class="muted">Références publiques issues de la presse et de recherches indexées sur Facebook, Instagram et X. Couverture partielle des réseaux : les contenus privés et non indexés restent inaccessibles. Tous les liens doivent être vérifiés avant toute intégration à la carte.</p></details></section>
+<section class="panel" aria-labelledby="veilleTitle"><h2 id="veilleTitle">📰 Veille presse et réseaux sociaux</h2><p id="veilleEtat" class="muted" role="status">Chargement de la veille…</p><details id="veilleDetails"><summary style="cursor:pointer;font-weight:600;padding:8px 0">Afficher / replier les liens de la veille</summary><div id="veilleLiens" class="veille-list"></div><p class="muted">Veille ciblée sur les suicides et tentatives survenus en Côte d’Ivoire : presse et publications publiques indexées sur Facebook (prioritaire), Instagram et X. Les publications sociales sont des pistes documentaires ; vérifier impérativement que les faits ont eu lieu en Côte d’Ivoire et écarter les doublons avant toute validation. Les contenus privés ou non indexés ne sont pas accessibles.</p></details></section>
 <section class="panel" aria-labelledby="mapLegendTitle">
 <h2 id="mapLegendTitle">🗺️ Légende de la carte</h2>
 <div class="map-legend-section map-legend-primary">
@@ -114,7 +114,7 @@
 
 <script src="resources/qgis2web_expressions.js"></script><script src="./resources/functions.js"></script><script src="./resources/ol.js"></script><script src="./resources/ol-layerswitcher.js"></script><script src="resources/olms.js"></script>
 <script src="layers/REGIONSANITAIRE_1.js"></script><script src="layers/LIEUDESUICIDE_2.js"></script><script src="layers/SERVICESDESOINSPUBLICS_3.js"></script>
-<script src="styles/REGIONSANITAIRE_1_style.js"></script><script src="styles/LIEUDESUICIDE_2_style.js"></script><script src="styles/SERVICESDESOINSPUBLICS_3_style.js"></script><script src="./layers/layers.js"></script><script src="./resources/Autolinker.min.js"></script><script src="./resources/qgis2web.js"></script><script src="./dashboard-time.js"></script><script src="./archives-2010-2013.js"></script><script src="./observatoire.js?v=20261120-akan-position-3"></script><script src="./veille.js"></script>
+<script src="styles/REGIONSANITAIRE_1_style.js"></script><script src="styles/LIEUDESUICIDE_2_style.js"></script><script src="styles/SERVICESDESOINSPUBLICS_3_style.js"></script><script src="./layers/layers.js"></script><script src="./resources/Autolinker.min.js"></script><script src="./resources/qgis2web.js"></script><script src="./dashboard-time.js"></script><script src="./archives-2010-2013.js"></script><script src="./observatoire.js?v=20261120-akan-position-3"></script><script src="./veille.js?v=20261120-veille-territoire-2"></script>
 <script>
 (function(){
   const el=document.getElementById('visitCount');
