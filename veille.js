@@ -25,23 +25,31 @@
       : null;
     const entries = Array.isArray(data.articles) ? data.articles : [];
     state.textContent = `${start ? `Depuis le ${start} · ` : ''}Dernière veille : ${date} · ${data.sources_interrogees || 0} recherches réussies · ${entries.length} liens à vérifier${data.requêtes_en_echec ? ` · ${data.requêtes_en_echec} recherche(s) indisponible(s)` : ''}.`;
+    const socialCount = entries.filter(item => item.categorie_source === 'Réseau social').length;
+    const attempted = Number(data.reseaux_requetes_prevues || 0);
+    const successes = Number(data.reseaux_requetes_reussies || 0);
+    if (attempted) state.textContent += ' Réseaux sociaux publics indexés : ' + socialCount + ' lien(s) repéré(s), ' + successes + '/' + attempted + ' recherches réussies (couverture non exhaustive).';
     if (!entries.length) {
       list.textContent = 'Aucune nouvelle référence repérée sur la période surveillée.';
       return;
     }
-    for (const item of entries.slice(0, 12)) {
+    const socialItems = entries.filter(item => item.categorie_source === 'Réseau social');
+    const pressItems = entries.filter(item => item.categorie_source !== 'Réseau social');
+    const visible = [...socialItems.slice(0, 6), ...pressItems.slice(0, 10)];
+    for (const item of visible) {
       try {
         const url = new URL(item.url);
         if (url.protocol !== 'https:' || !url.hostname) continue;
         const row = document.createElement('div');
         row.className = 'veille-item';
+        if (item.categorie_source === 'Réseau social') row.classList.add('veille-item-social');
         const anchor = document.createElement('a');
         anchor.href = url.href;
         anchor.target = '_blank';
         anchor.rel = 'noopener noreferrer';
-        anchor.textContent = item.domaine || url.hostname;
+        anchor.textContent = item.plateforme ? item.plateforme + ' · publication indexée' : (item.domaine || url.hostname);
         const detail = document.createElement('small');
-        detail.textContent = ` · ${item.date_publication || 'date inconnue'} · à vérifier`;
+        detail.textContent = item.type_date === 'reperage' ? ' · repérée le ' + (item.date_publication || 'date inconnue') + ' · date des faits non vérifiée' : ' · ' + (item.date_publication || 'date inconnue') + ' · à vérifier';
         row.append(anchor, detail);
         list.appendChild(row);
       } catch (_) { /* lien malformé : ignorer */ }
