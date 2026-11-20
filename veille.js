@@ -8,9 +8,17 @@
     const data = await response.json();
     if (!data.derniere_veille) {
       state.textContent = 'Première collecte à venir. Les cas documentés restent accessibles sur la carte.';
+      const updateEl=document.getElementById('homeLastUpdate');if(updateEl)updateEl.textContent='Non disponible';
       return;
     }
     const last = new Date(data.derniere_veille);
+    const updateEl = document.getElementById('homeLastUpdate');
+    const updateDetailEl = document.getElementById('homeLastUpdateDetail');
+    if (updateEl && updateDetailEl && !Number.isNaN(last.getTime())) {
+      updateEl.textContent = last.toLocaleString('fr-FR', {day:'2-digit',month:'short',year:'numeric',timeZone:'Africa/Abidjan'});
+      updateDetailEl.textContent = 'Dernière veille médiatique · cas non automatiquement validés';
+      updateEl.title = last.toLocaleString('fr-FR', {dateStyle:'full',timeStyle:'short',timeZone:'Africa/Abidjan'}) + ' (GMT)';
+    }
     const date = Number.isNaN(last.getTime()) ? 'date inconnue' : last.toLocaleString('fr-FR', {dateStyle: 'short', timeStyle: 'short', timeZone: 'Africa/Abidjan'});
     const start = typeof data.debut_veille === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(data.debut_veille)
       ? new Date(data.debut_veille + 'T00:00:00Z').toLocaleDateString('fr-FR', {day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC'})
@@ -40,5 +48,6 @@
     }
   } catch (_) {
     state.textContent = 'Veille temporairement indisponible.';
+    const updateEl=document.getElementById('homeLastUpdate');if(updateEl)updateEl.textContent='Indisponible';
   }
 })();
