@@ -87,7 +87,9 @@
         "origine_integration": "audit_social_2015_2026",
         "deces_suicide": "Non documenté",
         "inclusion_stats_deces": "Non",
-        "localisation_fournie_par_responsable": true
+        "localisation_fournie_par_responsable": true,
+        "latitude": 7.6257221727175555,
+        "longitude": -5.1094317767127775
       },
       "geometry": {
         "type": "Point",
