@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/veille.yml'
       - 'scripts/veille.py'
+      - 'scripts/social_veille.py'
       - 'data/veille_config.json'
   schedule:
     - cron: '17 1,7,13,19 * * *'
