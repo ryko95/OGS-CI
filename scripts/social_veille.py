@@ -44,6 +44,8 @@ def social_platform(url):
                             "/permalink.php", "/stories/")):
             return platform
         # Formats fréquents de publications Facebook nommées /nom/posts/identifiant.
+        if platform == "X" and "/status/" in path:
+            return platform
         if platform == "Facebook" and ("/posts/" in path or "/videos/" in path):
             return platform
         if platform == "Facebook" and host == "fb.watch":
