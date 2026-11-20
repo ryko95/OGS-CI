@@ -66,7 +66,7 @@
         "type_milie": "Urbain",
         "sexe": null,
         "age": null,
-        "categorie_": "Événement social — localisation indicative",
+        "categorie_": "Événement social — point communiqué par le responsable",
         "methode_ge": "Non diffusée",
         "type_evenement": "Crise suicidaire signalée",
         "statut_con": "Menace / crise signalée ; personne secourue",
@@ -82,17 +82,18 @@
         "validation_par": "Responsable de l’OGS-CI",
         "date_confirmation_recue": "2026-11-20",
         "nombre_cas": 1,
-        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
-        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "precision_localisation": "Coordonnées du lieu fournies par le responsable de l’OGS-CI le 20/11/2026 ; exactitude non vérifiée indépendamment",
+        "source_localisation": "Coordonnées GPS communiquées directement par le responsable de l’OGS-CI",
         "origine_integration": "audit_social_2015_2026",
         "deces_suicide": "Non documenté",
-        "inclusion_stats_deces": "Non"
+        "inclusion_stats_deces": "Non",
+        "localisation_fournie_par_responsable": true
       },
       "geometry": {
         "type": "Point",
         "coordinates": [
-          -5.03,
-          7.69
+          -5.1094317767127775,
+          7.6257221727175555
         ]
       }
     },
