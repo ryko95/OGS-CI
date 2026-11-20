@@ -11,8 +11,10 @@ var map = new ol.Map({
     })
 });
 
-//initial view - epsg:3857 coordinates if not "Match project CRS"
-map.getView().fit([-1384488.942715, 468064.452860, 151463.501001, 1221366.812377], map.getSize());
+// Initial OGS-CI view: the same closer national framing as the approved screenshot.
+// The mobile view uses a wider scale so the country is not cropped on small screens.
+map.getView().setCenter(ol.proj.fromLonLat([-5.9, 7.25]));
+map.getView().setZoom(window.matchMedia('(max-width: 850px)').matches ? 6 : 7);
 
 //change cursor
 function pointerOnFeature(evt) {
