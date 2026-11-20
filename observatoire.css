@@ -169,3 +169,8 @@
 .map-legend-section #themeLegend{margin-top:2px;margin-bottom:7px}
 .map-legend-section .legend-variable{margin-top:5px}
 @media(max-width:850px){.map-legend-items li{font-size:13px}.map-legend-items small{font-size:12px}}
+
+/* Symboles des faits issus de la veille sociale, distincts des décès. */
+.popup-social .popup-head{background:linear-gradient(135deg,#0369a1,#0891b2)}
+#socialRows .veille-item{display:block}
+#socialRows button{white-space:normal;text-align:left;max-width:100%}
