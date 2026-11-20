@@ -109,3 +109,15 @@
 .timeline-panel [hidden],.additions-panel [hidden]{display:none!important}
 
 .new-cases-alert:disabled{cursor:default;opacity:1}
+
+/* Choroplèthe par région : légende lisible dès l'arrivée sur la carte. */
+.map-confirmed-legend{position:absolute;top:72px;left:12px;z-index:6;width:min(235px,calc(100% - 24px));padding:12px 13px;border:1px solid #cbd5e1;border-radius:12px;background:rgba(255,255,255,.95);box-shadow:0 3px 14px #0002;color:#172033;font-size:12px;line-height:1.4;pointer-events:none}
+.map-confirmed-legend[hidden]{display:none!important}
+.map-confirmed-legend strong{display:block;font-size:13px;margin-bottom:2px}
+.map-confirmed-legend small{display:block;color:#475569;margin-bottom:8px}
+.confirmed-legend-items{display:grid;gap:6px;margin:8px 0}
+.confirmed-legend-row{display:flex;align-items:center;gap:8px;font-size:11px}
+.confirmed-legend-swatch{display:inline-block;flex:0 0 22px;height:13px;border:1px solid #94a3b8;border-radius:3px}
+.confirmed-legend-count{font-size:11px;font-weight:700;color:#334155}
+.confirmed-legend-note{font-size:10px;line-height:1.45;color:#475569;margin:8px 0 0}
+@media(max-width:850px){.map-confirmed-legend{top:70px;left:8px;width:min(208px,calc(100% - 16px));padding:9px 10px;font-size:11px}.map-confirmed-legend strong{font-size:12px}.confirmed-legend-row{font-size:10px}}
