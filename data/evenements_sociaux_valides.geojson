@@ -1,0 +1,315 @@
+{
+  "type": "FeatureCollection",
+  "name": "evenements_sociaux_valides_non_mortels",
+  "metadata": {
+    "title": "OGS-CI – interventions et tentatives relayées par les réseaux sociaux",
+    "source": "OGS_CI_Audit_Facebook_Historique_2015_2026.xlsx",
+    "validation": "Faits déclarés vérifiés par le responsable le 20/11/2026 ; qualification et issue conservées selon les sources de l'audit",
+    "avertissement": "Les coordonnées sont des repères approximatifs de localité, jamais les lieux exacts des faits. Aucun décès par suicide n'est confirmé dans ces sept fiches.",
+    "duree": "2015–2026",
+    "nombre_evenements": 7
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id_eveneme": "OGS-SOC-2019-001",
+        "id_audit": "FB-2019-01",
+        "date_evene": "2019-06-23",
+        "annee": "2019",
+        "localite": "Abidjan – Cocody",
+        "REGION": "ABIDJAN",
+        "regions": "ABIDJAN",
+        "type_milie": "Urbain",
+        "sexe": null,
+        "age": null,
+        "categorie_": "Événement social — localisation indicative",
+        "methode_ge": "Non diffusée",
+        "type_evenement": "Tentative de suicide",
+        "statut_con": "Tentative rapportée ; intervention et prise en charge",
+        "issue_documentee": "Prise en charge",
+        "confirmation_fait": "Fait examiné et déclaré vérifié par le responsable ; classification de l'événement distincte d'une confirmation de suicide ou de décès",
+        "niveau_pre": "Selon source documentaire secondaire",
+        "source_pri": "Facebook Live cité par KOACI",
+        "source_typ": "Réseaux sociaux / reprise médiatique",
+        "preuve_facebook": "Facebook cité explicitement ; publication originale non consultée",
+        "url_source": "https://www.koaci.com/article/2019/06/24/cote-divoire/societe/cote-divoire-un-homme-tente-de-se-suicider-en-direct-sur-facebook-la-police-et-un-proche-lui-sauvent-la-vie_132220.html",
+        "date_publi": null,
+        "date_ajout": "2026-11-20",
+        "validation_par": "Responsable de l’OGS-CI",
+        "date_confirmation_recue": "2026-11-20",
+        "nombre_cas": 1,
+        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
+        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "origine_integration": "audit_social_2015_2026",
+        "deces_suicide": "Non documenté",
+        "inclusion_stats_deces": "Non"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.9825439,
+          5.356256
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_eveneme": "OGS-SOC-2021-001",
+        "id_audit": "FB-2021-01",
+        "date_evene": "2021-12-22",
+        "annee": "2021",
+        "localite": "Akanzakro (Bouaké)",
+        "REGION": "GBÊKÊ",
+        "regions": "GBÊKÊ",
+        "type_milie": "Urbain",
+        "sexe": null,
+        "age": null,
+        "categorie_": "Événement social — localisation indicative",
+        "methode_ge": "Non diffusée",
+        "type_evenement": "Crise suicidaire signalée",
+        "statut_con": "Menace / crise signalée ; personne secourue",
+        "issue_documentee": "Secouru le lendemain",
+        "confirmation_fait": "Fait examiné et déclaré vérifié par le responsable ; classification de l'événement distincte d'une confirmation de suicide ou de décès",
+        "niveau_pre": "Selon source documentaire secondaire",
+        "source_pri": "Publication du GSPM citée par la presse",
+        "source_typ": "Réseaux sociaux / reprise médiatique",
+        "preuve_facebook": "Facebook cité explicitement ; publication originale non consultée",
+        "url_source": "https://news.educarriere.ci/news-34962-bouake-un-homme-veut-se-suicider-les-sapeurs-pompiers-en-negociation.html",
+        "date_publi": null,
+        "date_ajout": "2026-11-20",
+        "validation_par": "Responsable de l’OGS-CI",
+        "date_confirmation_recue": "2026-11-20",
+        "nombre_cas": 1,
+        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
+        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "origine_integration": "audit_social_2015_2026",
+        "deces_suicide": "Non documenté",
+        "inclusion_stats_deces": "Non"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.03,
+          7.69
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_eveneme": "OGS-SOC-2024-001",
+        "id_audit": "FB-2024-01",
+        "date_evene": "2024-06-21",
+        "annee": "2024",
+        "localite": "Yamoussoukro – secteur du lac",
+        "REGION": "YAMOUSSOUKRO",
+        "regions": "YAMOUSSOUKRO",
+        "type_milie": "Urbain",
+        "sexe": null,
+        "age": null,
+        "categorie_": "Événement social — localisation indicative",
+        "methode_ge": "Non diffusée",
+        "type_evenement": "Crise suicidaire signalée",
+        "statut_con": "Crise / menace rapportée ; intervention des secours",
+        "issue_documentee": "Secouru et pris en charge",
+        "confirmation_fait": "Fait examiné et déclaré vérifié par le responsable ; classification de l'événement distincte d'une confirmation de suicide ou de décès",
+        "niveau_pre": "Selon source documentaire secondaire",
+        "source_pri": "Publication du GSPM citée par la presse",
+        "source_typ": "Réseaux sociaux / reprise médiatique",
+        "preuve_facebook": "Facebook cité explicitement ; publication originale non consultée",
+        "url_source": "https://yop.l-frii.com/cote-divoire-il-tente-la-pire-methode-de-s8cide-mais-est-rapidement-secouru/",
+        "date_publi": null,
+        "date_ajout": "2026-11-20",
+        "validation_par": "Responsable de l’OGS-CI",
+        "date_confirmation_recue": "2026-11-20",
+        "nombre_cas": 1,
+        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
+        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "origine_integration": "audit_social_2015_2026",
+        "deces_suicide": "Non documenté",
+        "inclusion_stats_deces": "Non"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -5.2677515,
+          6.7959466
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_eveneme": "OGS-SOC-2025-001",
+        "id_audit": "FB-2025-01",
+        "date_evene": "2025-02-18",
+        "annee": "2025",
+        "localite": "Abidjan – pont Général-de-Gaulle",
+        "REGION": "ABIDJAN",
+        "regions": "ABIDJAN",
+        "type_milie": "Urbain",
+        "sexe": null,
+        "age": null,
+        "categorie_": "Événement social — localisation indicative",
+        "methode_ge": "Non diffusée",
+        "type_evenement": "Tentative de suicide",
+        "statut_con": "Tentative rapportée ; issue / circonstances à préciser",
+        "issue_documentee": "Issue exacte non établie dans l'audit",
+        "confirmation_fait": "Fait examiné et déclaré vérifié par le responsable ; classification de l'événement distincte d'une confirmation de suicide ou de décès",
+        "niveau_pre": "Selon source documentaire secondaire",
+        "source_pri": "Page Alertes 100 relayée par la presse",
+        "source_typ": "Réseaux sociaux / reprise médiatique",
+        "preuve_facebook": "Facebook cité explicitement ; original non consulté",
+        "url_source": "https://www.yessouan.ci/Tentative-de-suicide-ce-mardi-a-Abidjan-l-homme-se-jette-du-pont-De-Gaulle_a2325.html",
+        "date_publi": null,
+        "date_ajout": "2026-11-20",
+        "validation_par": "Responsable de l’OGS-CI",
+        "date_confirmation_recue": "2026-11-20",
+        "nombre_cas": 1,
+        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
+        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "origine_integration": "audit_social_2015_2026",
+        "deces_suicide": "Non documenté",
+        "inclusion_stats_deces": "Non"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.0025627,
+          5.3099175
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_eveneme": "OGS-SOC-2025-002",
+        "id_audit": "SOC-2025-01",
+        "date_evene": "2025-12-26",
+        "annee": "2025",
+        "localite": "Bingerville",
+        "REGION": "ABIDJAN",
+        "regions": "ABIDJAN",
+        "type_milie": "Urbain",
+        "sexe": null,
+        "age": null,
+        "categorie_": "Événement social — localisation indicative",
+        "methode_ge": "Non diffusée",
+        "type_evenement": "Tentative de suicide",
+        "statut_con": "Tentative rapportée ; personne secourue",
+        "issue_documentee": "Secourue et prise en charge",
+        "confirmation_fait": "Fait examiné et déclaré vérifié par le responsable ; classification de l'événement distincte d'une confirmation de suicide ou de décès",
+        "niveau_pre": "Selon source documentaire secondaire",
+        "source_pri": "Information GSPM reprise par AIP",
+        "source_typ": "Réseaux sociaux / reprise médiatique",
+        "preuve_facebook": "Plateforme sociale originale non déterminée",
+        "url_source": "https://www.aip.ci/cote-divoire-aip-les-sapeurs-pompiers-sauvent-une-jeune-femme-dune-tentative-de-suicide-a-bingerville-gspm/",
+        "date_publi": null,
+        "date_ajout": "2026-11-20",
+        "validation_par": "Responsable de l’OGS-CI",
+        "date_confirmation_recue": "2026-11-20",
+        "nombre_cas": 1,
+        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
+        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "origine_integration": "audit_social_2015_2026",
+        "deces_suicide": "Non documenté",
+        "inclusion_stats_deces": "Non"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -3.8770233,
+          5.3559068
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_eveneme": "OGS-SOC-2026-001",
+        "id_audit": "SOC-2026-01",
+        "date_evene": "2026-06-19",
+        "annee": "2026",
+        "localite": "Abidjan – pont HKB",
+        "REGION": "ABIDJAN",
+        "regions": "ABIDJAN",
+        "type_milie": "Urbain",
+        "sexe": null,
+        "age": null,
+        "categorie_": "Événement social — localisation indicative",
+        "methode_ge": "Non diffusée",
+        "type_evenement": "Crise suicidaire signalée",
+        "statut_con": "Personne en détresse secourue avant passage à l'acte",
+        "issue_documentee": "Secouru ; aucun passage à l'acte établi",
+        "confirmation_fait": "Fait examiné et déclaré vérifié par le responsable ; classification de l'événement distincte d'une confirmation de suicide ou de décès",
+        "niveau_pre": "Selon source documentaire secondaire",
+        "source_pri": "Communication GSPM sur les réseaux, reprise par AIP",
+        "source_typ": "Réseaux sociaux / reprise médiatique",
+        "preuve_facebook": "Plateforme sociale originale non déterminée",
+        "url_source": "https://www.aip.ci/cote-divoire-aip-voulant-se-suicider-au-pont-hkb-un-homme-en-detresse-secouru-par-le-gspm/",
+        "date_publi": null,
+        "date_ajout": "2026-11-20",
+        "validation_par": "Responsable de l’OGS-CI",
+        "date_confirmation_recue": "2026-11-20",
+        "nombre_cas": 1,
+        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
+        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "origine_integration": "audit_social_2015_2026",
+        "deces_suicide": "Non documenté",
+        "inclusion_stats_deces": "Non"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4,
+          5.33
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id_eveneme": "OGS-SOC-2026-002",
+        "id_audit": "FB-2026-01",
+        "date_evene": "2026-08-13",
+        "annee": "2026",
+        "localite": "Abidjan – Yopougon-Niangon",
+        "REGION": "ABIDJAN",
+        "regions": "ABIDJAN",
+        "type_milie": "Urbain",
+        "sexe": null,
+        "age": null,
+        "categorie_": "Événement social — localisation indicative",
+        "methode_ge": "Non diffusée",
+        "type_evenement": "Situation signalée, intention contestée",
+        "statut_con": "Événement documenté ; intention suicidaire contestée",
+        "issue_documentee": "Secouru ; nature des faits à clarifier",
+        "confirmation_fait": "Fait examiné et déclaré vérifié par le responsable ; classification de l'événement distincte d'une confirmation de suicide ou de décès",
+        "niveau_pre": "Selon source documentaire secondaire",
+        "source_pri": "Reprise de page GSPM et article KOACI",
+        "source_typ": "Réseaux sociaux / reprise médiatique",
+        "preuve_facebook": "Facebook via reprise indexée ; original non consulté",
+        "url_source": "https://www.koaci.com/article/2026/08/14/cote-divoire/societe/cote-divoire-yopougon-lhomme-ressortissant-togolais-qui-menacait-de-se-jeter-voulait-surtout-etre-entendu-ce-quil-dit_199551.html",
+        "date_publi": null,
+        "date_ajout": "2026-11-20",
+        "validation_par": "Responsable de l’OGS-CI",
+        "date_confirmation_recue": "2026-11-20",
+        "nombre_cas": 1,
+        "precision_localisation": "Repère géographique de localité/secteur uniquement, non le lieu exact",
+        "source_localisation": "Localité géographique approximative ; aucun GPS du fait vérifié",
+        "origine_integration": "audit_social_2015_2026",
+        "deces_suicide": "Non documenté",
+        "inclusion_stats_deces": "Non"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.1197062,
+          5.355137
+        ]
+      }
+    }
+  ]
+}
