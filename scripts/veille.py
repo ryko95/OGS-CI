@@ -13,7 +13,10 @@ from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from pathlib import Path
 
-from scripts.social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform
+try:
+    from scripts.social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform
+except ModuleNotFoundError:
+    from social_veille import SOCIAL_QUERIES, fetch_social_public, social_platform
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "data" / "veille.json"
