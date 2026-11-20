@@ -228,7 +228,7 @@ function showSocialPopup(f){
  ['Statut documentaire',p.statut_con],['Issue rapportée',p.issue_documentee],
  ['Origine du signalement',p.source_pri],['Lien avec Facebook',p.preuve_facebook],
  ['Fait vérifié par',p.validation_par],['Vérification reçue',p.date_confirmation_recue],
- ['Précision du repère',p.precision_localisation]
+ ['Latitude du point',p.latitude],['Longitude du point',p.longitude],['Précision du repère',p.precision_localisation]
  ];
  popupCard('popup-social','●','Événement documenté — hors décès',p.localite,rows,
  '<div class="popup-warning">Fait déclaré vérifié par le responsable. La nature (tentative, crise ou situation contestée) reste distincte d’un décès confirmé. La précision de localisation est indiquée dans la fiche.</div>'+sourceLink(p));
@@ -261,7 +261,7 @@ fetch('./data/tentatives_signalees.geojson',{cache:'no-store'}).then(response=>{
 }).catch(()=>{$('kpiAttempts').textContent='—';$('attemptState').textContent='Données des tentatives temporairement indisponibles.';});
 
 $('socialToggle').onchange=e=>socialLayer.setVisible(e.target.checked);
-fetch('./data/evenements_sociaux_valides.geojson',{cache:'no-store'})
+fetch('./data/evenements_sociaux_valides.geojson?v=20261120-akan-position-corrected',{cache:'no-store'})
  .then(response=>{if(!response.ok)throw new Error('HTTP '+response.status);return response.json();})
  .then(data=>{
    if(data.type!=='FeatureCollection'||!Array.isArray(data.features))throw new Error('GeoJSON social invalide');
