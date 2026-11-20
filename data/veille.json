@@ -1,12 +1,12 @@
 {
   "debut_veille": "2026-09-01",
-  "derniere_veille": "2026-11-20T13:14:15+00:00",
-  "sources_interrogees": 8,
+  "derniere_veille": "2026-11-20T15:18:57+00:00",
+  "sources_interrogees": 17,
   "nouvelles_references": 0,
   "requêtes_en_echec": 1,
-  "reseaux_requetes_reussies": 5,
+  "reseaux_requetes_reussies": 14,
   "reseaux_requetes_en_echec": 0,
-  "reseaux_requetes_prevues": 5,
+  "reseaux_requetes_prevues": 14,
   "articles": [
     {
       "id": "cf8fd0473515a72f04fb",
