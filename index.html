@@ -1,20 +1,35 @@
 <!doctype html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta charset="utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Observatoire géographique du suicide en Côte d'Ivoire : cartographie, analyses spatiales, tableau de bord et signalements.">
 <!-- Renseigner le jeton public Cloudflare Web Analytics pour activer le suivi quotidien et par pays. -->
 <meta name="cloudflare-web-analytics-token" content="6d1a1b5bb0834b4b9d8b28c06a99ba7d">
 <title>Observatoire géographique du suicide en Côte d'Ivoire</title>
-<link rel="stylesheet" href="./resources/ol.css"><link rel="stylesheet" href="resources/fontawesome-all.min.css"><link rel="stylesheet" href="./resources/ol-layerswitcher.css"><link rel="stylesheet" href="./resources/qgis2web.css"><link rel="stylesheet" href="./observatoire.css">
+<link rel="stylesheet" href="./resources/ol.css"><link rel="stylesheet" href="resources/fontawesome-all.min.css"><link rel="stylesheet" href="./resources/ol-layerswitcher.css"><link rel="stylesheet" href="./resources/qgis2web.css"><link rel="stylesheet" href="./observatoire.css?v=20261126-mobile-1">
 <script src="https://page-views-api.ratneshc.com/script" data-site="ryko95.github.io" data-path="/OGS-CI" defer></script>
 <script src="./analytics.js" defer></script>
+<style>
+@media(max-width:850px){
+html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!important}
+#app,.workspace,.side,.side.right,.map-wrap{height:auto!important;max-height:none!important;min-width:0}
+.side,.side.right{overflow:visible!important;flex:none}
+.map-wrap{flex:none}
+.map-wrap #map{height:60vh!important;height:60svh!important;min-height:280px!important}
+.map-confirmed-legend{position:static!important;order:2;width:auto;max-width:none;margin:8px 12px;pointer-events:auto}
+.map-badge{order:3}.author-badge{order:4}
+.mobile-nav{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;background:#fff;border-bottom:1px solid #dbe3ea}
+.mobile-nav a{padding:9px;color:#14213d;background:#eef2f7;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none}
+.panel{min-width:0;overflow-wrap:anywhere}
+}
+@media(min-width:851px){.mobile-nav{display:none}}
+</style>
 </head>
 <body>
 <div id="app">
 <header class="topbar"><div class="brand-mark">OG</div><div class="brand"><h1>Observatoire géographique du suicide en Côte d’Ivoire</h1><p>Cartographie • veille territoriale • analyse descriptive • signalement citoyen</p></div><div class="top-actions"><div class="visit-counter" title="Nombre de visites enregistrées sur l’Observatoire"><span class="visit-eye">👁</span><span id="visitCount">…</span><span>visites</span></div><button id="btnHome">⌂ Vue nationale</button><button id="btnHeat">♨ Heatmap</button><button id="btnReport">＋ Signaler un cas</button></div></header>
-<main class="workspace">
-<aside class="side left">
+<nav class="mobile-nav" aria-label="Navigation mobile"><a href="#map">Carte</a><a href="#mobileFilters">Filtres</a><a href="#newCasesAlert">Nouveaux cas</a><a href="#veilleTitle">Veille</a><a href="#mapLegendTitle">Légende</a><a href="#timelineTitle">Évolution</a><a href="#mobileStats">Statistiques</a><a href="#archivePanel">Archives</a></nav><main class="workspace">
+<aside class="side left" id="mobileFilters">
 <section class="panel"><h2>🗺️ Cartographie thématique</h2><div class="field-row"><label>Variable de la couche Région sanitaire</label><select id="themeField"></select></div><div class="field-row inline"><div><label>Mode</label><select id="themeMode"><option value="auto">Automatique</option><option value="numeric">Valeurs chiffrées — tons chauds</option><option value="nominal">Valeurs nominales — tons froids</option></select></div><div><label>Classes</label><select id="themeClasses"><option>5</option><option>4</option><option>6</option><option>7</option></select></div></div><p class="muted">Par défaut : « Cas présumés », variable déjà renseignée dans la couche des régions sanitaires. Les plages jaune → rouge représentent un nombre croissant de cas présumés. Vous pouvez changer la variable et le nombre de classes.</p></section>
 <section class="panel"><h2>🔎 Requêtes multicritères liées</h2><div class="query-block"><h3>Régions sanitaires</h3><div class="field-row"><select id="qRegionField"></select></div><div class="field-row inline"><select id="qRegionOp"></select><input id="qRegionValue" list="qRegionValues" placeholder="Valeur..."><datalist id="qRegionValues"></datalist></div></div><div class="query-block"><h3>Lieux de suicide</h3><div class="field-row"><select id="qCaseField"></select></div><div class="field-row inline"><select id="qCaseOp"></select><input id="qCaseValue" list="qCaseValues" placeholder="Valeur..."><datalist id="qCaseValues"></datalist></div></div><label class="switchline"><input type="checkbox" id="linkQueries" checked> Lier les résultats par région pour affiner la sélection</label><div class="button-row"><button class="btn primary small" id="runQuery">Exécuter</button><button class="btn ghost small" id="resetQuery">Réinitialiser</button><button class="btn ghost small" id="zoomQuery">Zoom résultats</button></div><div class="footer-note" id="queryInfo">Aucun filtre actif.</div></section>
 <details class="panel secondary-details"><summary>📋 Résultats de la sélection</summary><div class="results"><table class="result-table"><thead><tr><th>Lieu</th><th>Région</th><th>Sexe</th><th>Date</th></tr></thead><tbody id="resultBody"></tbody></table></div></details>
@@ -84,7 +99,7 @@
 <p id="timelineNote" class="muted"></p>
 <p class="muted">0 signifie aucun cas documenté pour ce mois dans la sélection, pas une absence réelle de suicides. Les dates des faits sont utilisées ; les dates de publication ne les remplacent pas. Pour les archives, certaines dates sont probables ou correspondent à la découverte : consulter leur précision dans les dossiers.</p>
 </section>
-<section class="panel"><h2>📊 Tableau de bord</h2><p id="archiveSummary" class="muted"></p><div class="stat-grid"><div class="stat"><div class="n" id="kpiCases">0</div><div class="l">Événements documentés</div></div><div class="stat"><div class="n" id="kpiRegions">0</div><div class="l">Régions concernées</div></div><div class="stat"><div class="n" id="kpiMale">0</div><div class="l">Hommes</div></div><div class="stat"><div class="n" id="kpiFemale">0</div><div class="l">Femmes</div></div></div></section>
+<section class="panel" id="mobileStats"><h2>📊 Tableau de bord</h2><p id="archiveSummary" class="muted"></p><div class="stat-grid"><div class="stat"><div class="n" id="kpiCases">0</div><div class="l">Événements documentés</div></div><div class="stat"><div class="n" id="kpiRegions">0</div><div class="l">Régions concernées</div></div><div class="stat"><div class="n" id="kpiMale">0</div><div class="l">Hommes</div></div><div class="stat"><div class="n" id="kpiFemale">0</div><div class="l">Femmes</div></div></div></section>
 <section class="panel" aria-labelledby="attemptTitle"><h2 id="attemptTitle">Tentatives récentes rapportées par la presse</h2><div class="stat-grid"><div class="stat"><div class="n" id="kpiAttempts">…</div><div class="l">Tentatives à vérifier depuis septembre 2026, hors décès</div></div></div><label class="switchline"><input type="checkbox" id="attemptToggle" checked> Afficher les tentatives sur la carte (même symbole rouge)</label><p id="attemptState" class="muted" role="status">Chargement des tentatives…</p><div id="attemptRows" class="veille-list"></div><p class="muted">Les repères situent la ville à titre indicatif. Ces tentatives sont incluses dans les statistiques générales avec leur statut explicite ; elles ne sont pas comptées comme décès.</p></section>
 <section class="panel" aria-labelledby="socialTitle">
 <h2 id="socialTitle">🔎 Événements vérifiés issus de la veille sociale</h2>
