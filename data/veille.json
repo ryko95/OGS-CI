@@ -1,13 +1,22 @@
 {
   "debut_veille": "2026-09-01",
-  "derniere_veille": "2026-11-26T09:31:07+00:00",
+  "derniere_veille": "2026-11-26T22:20:28+00:00",
   "sources_interrogees": 17,
-  "nouvelles_references": 0,
+  "nouvelles_references": 1,
   "requêtes_en_echec": 1,
   "reseaux_requetes_reussies": 14,
   "reseaux_requetes_en_echec": 0,
   "reseaux_requetes_prevues": 14,
   "articles": [
+    {
+      "id": "59695a16eb1098ec48b2",
+      "url": "https://news.google.com/rss/articles/CBMixgFBVV95cUxOVDdNa1Z3SXZBVFNsUEx4bnA5T0xEc0dScEpIUWx3aHl1Qm9lSW1ObWlYSkRnN0dGSU5CSjBFMTNMTUdPS25zRlpjR29ENDlCTFA0SVEtV3VzQ2hkSThjVXAzaEpNYVhmUXJyYXBYMFNlUU1ZOXg3MDJWYzlmNkxHaGNyZWt4eGVlXzhpZjdVUkl6M0pkYkhkRzFCcEZCWm9keDlUUmZDUnFfTC1kNVNRWnA3b1lvY2d0cDZLRG11UFU4MkNISmc?oc=5",
+      "domaine": "news.google.com",
+      "date_publication": "2026-11-26",
+      "premiere_detection": "2026-11-26T22:20:28+00:00",
+      "statut": "Article à vérifier",
+      "categorie_source": "Presse"
+    },
     {
       "id": "420e64915385e9a50ac4",
       "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE5xMWhsSVBnNS1jc3pLR2NGeE5qVHUtZnRzZzlmYmhKRHh5b2t6RENuY2tma2hxck1uekNjMXZ2bjlPS2xfdzZZcW9pSndCVExnSlFXRW5FX0ttUmVsWFNjRmJpcldoYW8xTnZyQVI5R21oTkQ2TE5nVW12ZEo?oc=5",
