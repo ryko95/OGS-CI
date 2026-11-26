@@ -138,26 +138,30 @@ html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!impo
 <script>
 (function(){
  const el=document.getElementById('visitCount');
+ const label=el.nextElementSibling;
  const key='ogs-ci-last-total';
- function show(n, cached){el.textContent=n.toLocaleString('fr-FR');el.parentElement.title=cached?'Dernier total connu, actualisation en cours':'Total cumulé des visites enregistrées';}
- try{const saved=localStorage.getItem(key);if(saved!==null && Number.isSafeInteger(Number(saved)) && Number(saved)>=0)show(Number(saved),true);}catch(e){}
+ const url='https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=/OGS-CI';
+ let busy=false,last=null;
+ function valid(raw){return raw!==null && raw!==undefined && raw!=='' && Number.isSafeInteger(Number(raw)) && Number(raw)>=0;}
+ function show(n,cached){last=n;el.textContent=n.toLocaleString('fr-FR');label.textContent=cached?'visites (dernier total connu)':'visites au total';el.parentElement.title=cached?'Dernier total vérifié':'Total cumulé des visites enregistrées';}
+ try{const saved=localStorage.getItem(key);if(valid(saved))show(Number(saved),true);}catch(e){}
  async function loadVisits(){
+  if(busy)return;busy=true;
   try{
-   const res=await fetch('https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=%2FOGS-CI',{cache:'no-store'});
-   if(!res.ok)throw Error('HTTP '+res.status);
-   const data=await res.json();
-   const raw=data.views;
-   if(raw===undefined || raw===null || raw==='')throw Error('Total absent');
-   const n=Number(raw);
-   if(!Number.isSafeInteger(n)||n<0)throw Error('Total invalide');
-   show(n,false);
+   const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
+   let data;
+   try{const res=await fetch(url,{cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});if(!res.ok)throw Error('HTTP '+res.status);data=await res.json();}finally{clearTimeout(timeout);}
+   if(!valid(data.views))throw Error('Total invalide');
+   const n=Number(data.views);show(n,false);
    try{localStorage.setItem(key,String(n));}catch(e){}
-  }catch(e){if(el.textContent==='…')el.textContent='Indisponible';el.parentElement.title='Total non actualisé : service momentanément inaccessible';}
+  }catch(e){if(last!==null)show(last,true);else{el.textContent='—';label.textContent='Total temporairement inaccessible';}el.parentElement.title='Service de comptage momentanément inaccessible';}
+  finally{busy=false;}
  }
  loadVisits();
- setTimeout(loadVisits,2500);
- setInterval(loadVisits,60000);
- window.addEventListener('pageshow',loadVisits);
+ setTimeout(loadVisits,5000);
+ setInterval(()=>{if(!document.hidden)loadVisits();},60000);
+ window.addEventListener('online',loadVisits);
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadVisits();});
 })();
 </script>
 </body></html>
