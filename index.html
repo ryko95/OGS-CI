@@ -32,7 +32,7 @@ html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!impo
 </head>
 <body>
 <div id="app">
-<header class="topbar"><div class="brand-mark">OG</div><div class="brand"><h1>Observatoire géographique du suicide en Côte d’Ivoire</h1><p>Cartographie • veille territoriale • analyse descriptive • signalement citoyen</p></div><div class="top-actions"><div class="visit-counter" title="Nombre de visites enregistrées sur l’Observatoire"><span class="visit-eye">👁</span><span id="visitCount">…</span><span>visites</span></div><button id="btnHome">⌂ Vue nationale</button><button id="btnHeat">♨ Heatmap</button><button id="btnReport">＋ Signaler un cas</button></div></header>
+<header class="topbar"><div class="brand-mark">OG</div><div class="brand"><h1>Observatoire géographique du suicide en Côte d’Ivoire</h1><p>Cartographie • veille territoriale • analyse descriptive • signalement citoyen</p></div><div class="top-actions"><div class="visit-counter" title="Nombre de visites enregistrées sur l’Observatoire"><span class="visit-eye">👁</span><span id="visitCount" aria-live="polite">…</span><span>visites au total</span></div><button id="btnHome">⌂ Vue nationale</button><button id="btnHeat">♨ Heatmap</button><button id="btnReport">＋ Signaler un cas</button></div></header>
 <nav class="mobile-nav" aria-label="Navigation mobile"><a href="#map">Carte</a><a href="#mobileFilters">Filtres</a><a href="#newCasesAlert">Nouveaux cas</a><a href="#veilleTitle">Veille</a><a href="#mapLegendTitle">Légende</a><a href="#timelineTitle">Évolution</a><a href="#mobileStats">Statistiques</a><a href="#archivePanel">Archives</a></nav><main class="workspace">
 <aside class="side left" id="mobileFilters">
 <section class="panel"><h2>🗺️ Cartographie thématique</h2><div class="field-row"><label>Variable de la couche Région sanitaire</label><select id="themeField"></select></div><div class="field-row inline"><div><label>Mode</label><select id="themeMode"><option value="auto">Automatique</option><option value="numeric">Valeurs chiffrées — tons chauds</option><option value="nominal">Valeurs nominales — tons froids</option></select></div><div><label>Classes</label><select id="themeClasses"><option>5</option><option>4</option><option>6</option><option>7</option></select></div></div><p class="muted">Par défaut : « Cas présumés », variable déjà renseignée dans la couche des régions sanitaires. Les plages jaune → rouge représentent un nombre croissant de cas présumés. Vous pouvez changer la variable et le nombre de classes.</p></section>
@@ -137,19 +137,27 @@ html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!impo
 <script src="styles/REGIONSANITAIRE_1_style.js"></script><script src="styles/LIEUDESUICIDE_2_style.js"></script><script src="styles/SERVICESDESOINSPUBLICS_3_style.js"></script><script src="./layers/layers.js"></script><script src="./resources/Autolinker.min.js"></script><script src="./resources/qgis2web.js"></script><script src="./dashboard-time.js"></script><script src="./archives-2010-2013.js"></script><script src="./observatoire.js?v=20261120-akan-position-3"></script><script src="./veille.js?v=20261120-veille-territoire-2"></script>
 <script>
 (function(){
-  const el=document.getElementById('visitCount');
-  async function loadVisits(){
-    try{
-      const res=await fetch('https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=%2FOGS-CI',{cache:'no-store'});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data=await res.json();
-      el.textContent=Number(data.views||0).toLocaleString('fr-FR');
-    }catch(e){
-      el.textContent='—';
-      el.parentElement.title='Compteur momentanément indisponible';
-    }
-  }
-  window.addEventListener('load',function(){setTimeout(loadVisits,1200);});
+ const el=document.getElementById('visitCount');
+ const key='ogs-ci-last-total';
+ function show(n, cached){el.textContent=n.toLocaleString('fr-FR');el.parentElement.title=cached?'Dernier total connu, actualisation en cours':'Total cumulé des visites enregistrées';}
+ try{const saved=localStorage.getItem(key);if(saved!==null && Number.isSafeInteger(Number(saved)) && Number(saved)>=0)show(Number(saved),true);}catch(e){}
+ async function loadVisits(){
+  try{
+   const res=await fetch('https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=%2FOGS-CI',{cache:'no-store'});
+   if(!res.ok)throw Error('HTTP '+res.status);
+   const data=await res.json();
+   const raw=data.views;
+   if(raw===undefined || raw===null || raw==='')throw Error('Total absent');
+   const n=Number(raw);
+   if(!Number.isSafeInteger(n)||n<0)throw Error('Total invalide');
+   show(n,false);
+   try{localStorage.setItem(key,String(n));}catch(e){}
+  }catch(e){if(el.textContent==='…')el.textContent='Indisponible';el.parentElement.title='Total non actualisé : service momentanément inaccessible';}
+ }
+ loadVisits();
+ setTimeout(loadVisits,2500);
+ setInterval(loadVisits,60000);
+ window.addEventListener('pageshow',loadVisits);
 })();
 </script>
 </body></html>
