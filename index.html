@@ -7,7 +7,7 @@
 <meta name="cloudflare-web-analytics-token" content="6d1a1b5bb0834b4b9d8b28c06a99ba7d">
 <title>Observatoire géographique du suicide en Côte d'Ivoire</title>
 <link rel="stylesheet" href="./resources/ol.css"><link rel="stylesheet" href="resources/fontawesome-all.min.css"><link rel="stylesheet" href="./resources/ol-layerswitcher.css"><link rel="stylesheet" href="./resources/qgis2web.css"><link rel="stylesheet" href="./observatoire.css?v=20261126-mobile-1">
-<script src="https://page-views-api.ratneshc.com/script" data-site="ryko95.github.io" data-path="/OGS-CI" defer></script>
+
 <script src="./analytics.js" defer></script>
 <style>
 @media(max-width:850px){
@@ -137,33 +137,18 @@ html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!impo
 <script src="styles/REGIONSANITAIRE_1_style.js"></script><script src="styles/LIEUDESUICIDE_2_style.js"></script><script src="styles/SERVICESDESOINSPUBLICS_3_style.js"></script><script src="./layers/layers.js"></script><script src="./resources/Autolinker.min.js"></script><script src="./resources/qgis2web.js"></script><script src="./dashboard-time.js"></script><script src="./archives-2010-2013.js"></script><script src="./observatoire.js?v=20261120-akan-position-3"></script><script src="./veille.js?v=20261120-veille-territoire-2"></script>
 <script>
 (function(){
- const el=document.getElementById('visitCount');
- const label=el.nextElementSibling;
- const key='ogs-ci-last-total';
- const url='https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=%2FOGS-CI';
- let busy=false,last=145;
- function valid(raw){return raw!==null && raw!==undefined && raw!=='' && Number.isSafeInteger(Number(raw)) && Number(raw)>=0;}
- function show(n,cached){last=n;el.textContent=n.toLocaleString('fr-FR');label.textContent='visites';el.parentElement.title=cached?'Dernier total vérifié':'Total cumulé des visites enregistrées';}
- show(last,true);
- try{const saved=localStorage.getItem(key);if(valid(saved)&&Number(saved)>=last)show(Number(saved),true);}catch(e){}
- async function loadVisits(){
-  if(busy)return;busy=true;
-  try{
-   const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
-   let data;
-   try{const res=await fetch(url,{cache:'no-store',signal:controller.signal});if(!res.ok)throw Error('HTTP '+res.status);data=await res.json();}finally{clearTimeout(timeout);}
-   const raw=data.views ?? data.count ?? data.total ?? data.data?.views;
-   if(!valid(raw))throw Error('Total invalide');
-   const n=Number(raw);if(n<last)throw Error('Total inférieur au dernier total connu');show(n,false);
-   try{localStorage.setItem(key,String(n));}catch(e){}
-  }catch(e){if(last!==null)show(last,true);else{el.textContent='—';label.textContent='visites au total (indisponible)';}el.parentElement.title='Service de comptage momentanément inaccessible';}
-  finally{busy=false;}
- }
- loadVisits();
- setTimeout(loadVisits,5000);
- setInterval(()=>{if(!document.hidden)loadVisits();},60000);
- window.addEventListener('online',loadVisits);
- document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadVisits();});
+ const el=document.getElementById('visitCount'); if(!el)return;
+ const label=el.nextElementSibling, base='https://dmgzthvrgdzzfziiyigj.supabase.co/rest/v1/', apiKey="sb_publishable_wa6R_kFxco_kP47xNW80pA_npMQnTEC";
+ const id=crypto.randomUUID(), key='ogs-ci-supabase-total';
+ let last=145,busy=false,recorded=false;
+ function show(n){if(Number.isSafeInteger(n)&&n>=145){last=Math.max(last,n);el.textContent=last.toLocaleString('fr-FR');label.textContent='visites';try{localStorage.setItem(key,String(last));}catch(e){}}}
+ try{show(Number(localStorage.getItem(key)));}catch(e){} show(last);
+ async function request(path,options={}){const res=await fetch(base+path,{...options,cache:'no-store',headers:{apikey:apiKey,'Content-Type':'application/json',...options.headers},signal:AbortSignal.timeout(15000)});if(!res.ok)throw Error('HTTP '+res.status);return res;}
+ async function refresh(){if(busy)return;busy=true;try{
+ if(!recorded){await request('ogs_ci_visit_events?on_conflict=id',{method:'POST',headers:{Prefer:'resolution=ignore-duplicates,return=minimal'},body:JSON.stringify({id})});recorded=true;}
+ const res=await request('rpc/ogs_ci_visit_total',{method:'POST',body:'{}'});show(Number(await res.json()));el.parentElement.title='Total cumulé des visites enregistrées';
+ }catch(e){el.parentElement.title='Dernier total disponible';console.warn('OGS-CI compteur',e);}finally{busy=false;}}
+ refresh();setTimeout(refresh,5000);setInterval(()=>{if(!document.hidden)refresh();},30000);window.addEventListener('online',refresh);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 })();
 </script>
 </body></html>
