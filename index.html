@@ -29,7 +29,6 @@ html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!impo
 }
 @media(min-width:851px){.mobile-nav{display:none}}
 </style>
-<style id="temporary-hide-visit-counter">.top-actions .visit-counter{display:none!important;visibility:hidden!important}</style>
 </head>
 <body>
 <div id="app">
@@ -141,7 +140,7 @@ html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!impo
  const el=document.getElementById('visitCount');
  const label=el.nextElementSibling;
  const key='ogs-ci-last-total';
- const url='https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=/OGS-CI';
+ const url='https://page-views-api.ratneshc.com/api/v1/views?site=ryko95.github.io&path=%2FOGS-CI';
  let busy=false,last=null;
  function valid(raw){return raw!==null && raw!==undefined && raw!=='' && Number.isSafeInteger(Number(raw)) && Number(raw)>=0;}
  function show(n,cached){last=n;el.textContent=n.toLocaleString('fr-FR');label.textContent=cached?'visites (dernier total connu)':'visites au total';el.parentElement.title=cached?'Dernier total vérifié':'Total cumulé des visites enregistrées';}
@@ -151,11 +150,12 @@ html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!impo
   try{
    const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),12000);
    let data;
-   try{const res=await fetch(url,{cache:'no-store',credentials:'omit',referrerPolicy:'no-referrer',signal:controller.signal});if(!res.ok)throw Error('HTTP '+res.status);data=await res.json();}finally{clearTimeout(timeout);}
-   if(!valid(data.views))throw Error('Total invalide');
-   const n=Number(data.views);show(n,false);
+   try{const res=await fetch(url,{cache:'no-store',signal:controller.signal});if(!res.ok)throw Error('HTTP '+res.status);data=await res.json();}finally{clearTimeout(timeout);}
+   const raw=data.views ?? data.count ?? data.total ?? data.data?.views;
+   if(!valid(raw))throw Error('Total invalide');
+   const n=Number(raw);show(n,false);
    try{localStorage.setItem(key,String(n));}catch(e){}
-  }catch(e){if(last!==null)show(last,true);else{el.textContent='—';label.textContent='Total temporairement inaccessible';}el.parentElement.title='Service de comptage momentanément inaccessible';}
+  }catch(e){if(last!==null)show(last,true);else{el.textContent='—';label.textContent='visites au total (indisponible)';}el.parentElement.title='Service de comptage momentanément inaccessible';}
   finally{busy=false;}
  }
  loadVisits();
